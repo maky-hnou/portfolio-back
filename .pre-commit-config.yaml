@@ -5,14 +5,7 @@ repos:
   rev: v2.4.0
   hooks:
   - id: check-ast
-  - id: trailing-whitespace
   - id: check-toml
-  - id: end-of-file-fixer
-
-- repo: https://github.com/asottile/add-trailing-comma
-  rev: v2.1.0
-  hooks:
-  - id: add-trailing-comma
 
 - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
   rev: v2.1.0
@@ -25,33 +18,6 @@ repos:
 
 - repo: local
   hooks:
-  - id: autoflake
-    name: autoflake
-    entry: poetry run autoflake
-    language: system
-    types: [python]
-    args: [--in-place, --remove-all-unused-imports, --remove-duplicate-keys]
-
-  - id: black
-    name: Format with Black
-    entry: poetry run black
-    language: system
-    types: [python]
-
-  - id: isort
-    name: isort
-    entry: poetry run isort
-    language: system
-    types: [python]
-
-  - id: flake8
-    name: Check with Flake8
-    entry: poetry run flake8
-    language: system
-    pass_filenames: false
-    types: [python]
-    args: [--count, .]
-
   - id: mypy
     name: Validate types with MyPy
     entry: poetry run mypy
@@ -60,3 +26,25 @@ repos:
     pass_filenames: false
     args:
     - "portfolio_backend"
+
+  - id: ruff
+    name: ruff
+    description: "Run 'ruff' for extremely fast Python linting"
+    entry: poetry run ruff check --force-exclude
+    language: python
+    types_or: [python, pyi]
+    args: []
+    require_serial: true
+    additional_dependencies: []
+    minimum_pre_commit_version: "2.9.2"
+
+  - id: ruff-format
+    name: ruff-format
+    description: "Run 'ruff format' for extremely fast Python formatting"
+    entry: poetry run ruff format --force-exclude
+    language: python
+    types_or: [python, pyi]
+    args: []
+    require_serial: true
+    additional_dependencies: []
+    minimum_pre_commit_version: "2.9.2"
