@@ -71,7 +71,21 @@ select = [
     "Q",  # Quotes
     "I",  # Import order
     "SIM",  # Simplifications
-    "COM",  # Comprehensions
+    "COM",  # Commas
+    "C90",  # Code Complexity
+    "UP",  # Pyupgrade
+    "ANN",  # Annotations
+    "ASYNC",  # Async
+    "S",  # Bandit
+    "BLE",  # Blind-except
+    "FBT",  # Boolean-trap
+    "A",  # Builtins
+    "C4",  # Comprehensions
+    "LOG",  # Logging
+    "G",  # Logging-format
+    "ARG",  # Unused arguments
+    "PL",  # Pylint
+    "R",  # Refactor
 ]
 # List of disabled rules
 ignore = [
