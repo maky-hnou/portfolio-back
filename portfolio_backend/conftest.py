@@ -1,4 +1,4 @@
-from typing import Any, AsyncGenerator
+from collections.abc import AsyncGenerator
 
 import pytest
 from fastapi import FastAPI
@@ -18,8 +18,7 @@ from portfolio_backend.web.application import get_app
 
 @pytest.fixture(scope="session")
 def anyio_backend() -> str:
-    """
-    Backend for anyio pytest plugin.
+    """Backend for anyio pytest plugin.
 
     :return: backend name.
     """
@@ -28,8 +27,7 @@ def anyio_backend() -> str:
 
 @pytest.fixture(scope="session")
 async def _engine() -> AsyncGenerator[AsyncEngine, None]:
-    """
-    Create engine and databases.
+    """Create engine and databases.
 
     :yield: new engine.
     """
@@ -55,8 +53,7 @@ async def _engine() -> AsyncGenerator[AsyncEngine, None]:
 async def dbsession(
     _engine: AsyncEngine,
 ) -> AsyncGenerator[AsyncSession, None]:
-    """
-    Get session to database.
+    """Get session to database.
 
     Fixture that returns a SQLAlchemy session with a SAVEPOINT, and the rollback to it
     after the test completes.
@@ -85,8 +82,7 @@ async def dbsession(
 def fastapi_app(
     dbsession: AsyncSession,
 ) -> FastAPI:
-    """
-    Fixture for creating FastAPI app.
+    """Fixture for creating FastAPI app.
 
     :return: fastapi app with mocked dependencies.
     """
@@ -98,13 +94,11 @@ def fastapi_app(
 @pytest.fixture
 async def client(
     fastapi_app: FastAPI,
-    anyio_backend: Any,
 ) -> AsyncGenerator[AsyncClient, None]:
-    """
-    Fixture that creates client for requesting server.
+    """Fixture that creates client for requesting server.
 
     :param fastapi_app: the application.
     :yield: client for the app.
     """
-    async with AsyncClient(app=fastapi_app, base_url="http://test") as ac:
+    async with AsyncClient(app=fastapi_app, base_url="http://test", timeout=10) as ac:
         yield ac

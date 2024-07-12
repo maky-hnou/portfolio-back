@@ -6,8 +6,7 @@ from starlette import status
 
 @pytest.mark.anyio
 async def test_health(client: AsyncClient, fastapi_app: FastAPI) -> None:
-    """
-    Checks the health endpoint.
+    """Checks the health endpoint.
 
     :param client: client for the app.
     :param fastapi_app: current FastAPI application.

@@ -1,4 +1,4 @@
-from typing import Awaitable, Callable
+from collections.abc import Awaitable, Callable
 
 from fastapi import FastAPI
 from prometheus_fastapi_instrumentator.instrumentation import (
@@ -10,8 +10,7 @@ from portfolio_backend.settings import settings
 
 
 def _setup_db(app: FastAPI) -> None:  # pragma: no cover
-    """
-    Creates connection to the database.
+    """Create connection to the database.
 
     This function creates SQLAlchemy engine instance,
     session_factory for creating sessions
@@ -29,8 +28,7 @@ def _setup_db(app: FastAPI) -> None:  # pragma: no cover
 
 
 def setup_prometheus(app: FastAPI) -> None:  # pragma: no cover
-    """
-    Enables prometheus integration.
+    """Enable prometheus integration.
 
     :param app: current application.
     """
@@ -42,8 +40,7 @@ def setup_prometheus(app: FastAPI) -> None:  # pragma: no cover
 def register_startup_event(
     app: FastAPI,
 ) -> Callable[[], Awaitable[None]]:  # pragma: no cover
-    """
-    Actions to run on application startup.
+    """Actions to run on application startup.
 
     This function uses fastAPI app to store data
     in the state, such as db_engine.
@@ -66,8 +63,7 @@ def register_startup_event(
 def register_shutdown_event(
     app: FastAPI,
 ) -> Callable[[], Awaitable[None]]:  # pragma: no cover
-    """
-    Actions to run on application's shutdown.
+    """Actions to run on application's shutdown.
 
     :param app: fastAPI application.
     :return: function that actually performs actions.
