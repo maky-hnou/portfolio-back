@@ -7,6 +7,10 @@ from portfolio_backend.db.base import Base
 
 
 class TextDataModel(Base):
+    """Text model."""
+
+    __tablename__ = "text_data"
+
     text_id: Mapped[str] = mapped_column(String, primary_key=True)
     filename: Mapped[str] = mapped_column(String)
     text: Mapped[str] = mapped_column(String)
