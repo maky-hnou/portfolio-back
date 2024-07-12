@@ -2,8 +2,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class DummyModelDTO(BaseModel):
-    """
-    DTO for dummy models.
+    """DTO for dummy models.
 
     It returned when accessing dummy models from the API.
     """

@@ -11,8 +11,7 @@ except ImportError:
 
 
 class UvicornWorker(BaseUvicornWorker):
-    """
-    Configuration for uvicorn workers.
+    """Configuration for uvicorn workers.
 
     This class is subclassing UvicornWorker and defines
     some parameters class-wide, because it's impossible,
@@ -29,8 +28,7 @@ class UvicornWorker(BaseUvicornWorker):
 
 
 class GunicornApplication(BaseApplication):
-    """
-    Custom gunicorn application.
+    """Custom gunicorn application.
 
     This class is used to start guncicorn
     with custom uvicorn workers.
@@ -54,8 +52,7 @@ class GunicornApplication(BaseApplication):
         super().__init__()
 
     def load_config(self) -> None:
-        """
-        Load config for web server.
+        """Load config for web server.
 
         This function is used to set parameters to gunicorn
         main process. It only sets parameters that
@@ -67,8 +64,7 @@ class GunicornApplication(BaseApplication):
                 self.cfg.set(key.lower(), value)
 
     def load(self) -> str:
-        """
-        Load actual application.
+        """Load actual application.
 
         Gunicorn loads application based on this
         function's returns. We return python's path to

@@ -8,11 +8,10 @@ from portfolio_backend.settings import settings
 
 
 def set_multiproc_dir() -> None:
-    """
-    Sets mutiproc_dir env variable.
+    """Set mutiproc_dir env variable.
 
     This function cleans up the multiprocess directory
-    and recreates it. This actions are required by prometheus-client
+    and recreates it. These actions are required by prometheus-client
     to share metrics between processes.
 
     After cleanup, it sets two variables.
@@ -24,7 +23,7 @@ def set_multiproc_dir() -> None:
     """
     shutil.rmtree(settings.prometheus_dir, ignore_errors=True)
     os.makedirs(settings.prometheus_dir, exist_ok=True)
-    os.environ["prometheus_multiproc_dir"] = str(
+    os.environ["prometheus_multiproc_dir"] = str(  # noqa SIM112
         settings.prometheus_dir.expanduser().absolute(),
     )
     os.environ["PROMETHEUS_MULTIPROC_DIR"] = str(

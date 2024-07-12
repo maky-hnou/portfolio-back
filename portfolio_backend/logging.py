@@ -1,6 +1,5 @@
 import logging
 import sys
-from typing import Union
 
 from loguru import logger
 
@@ -8,8 +7,7 @@ from portfolio_backend.settings import settings
 
 
 class InterceptHandler(logging.Handler):
-    """
-    Default handler from examples in loguru documentation.
+    """Default handler from examples in loguru documentation.
 
     This handler intercepts all log requests and
     passes them to loguru.
@@ -19,13 +17,12 @@ class InterceptHandler(logging.Handler):
     """
 
     def emit(self, record: logging.LogRecord) -> None:  # pragma: no cover
-        """
-        Propagates logs to loguru.
+        """Propagates logs to loguru.
 
         :param record: record to log.
         """
         try:
-            level: Union[str, int] = logger.level(record.levelname).name
+            level: str | int = logger.level(record.levelname).name
         except ValueError:
             level = record.levelno
 
@@ -42,7 +39,7 @@ class InterceptHandler(logging.Handler):
 
 
 def configure_logging() -> None:  # pragma: no cover
-    """Configures logging."""
+    """Configure logging."""
     intercept_handler = InterceptHandler()
 
     logging.basicConfig(handlers=[intercept_handler], level=logging.NOTSET)

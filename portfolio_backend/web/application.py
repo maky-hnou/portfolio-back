@@ -16,8 +16,7 @@ APP_ROOT = Path(__file__).parent.parent
 
 
 def get_app() -> FastAPI:
-    """
-    Get FastAPI application.
+    """Get FastAPI application.
 
     This is the main constructor of an application.
 
