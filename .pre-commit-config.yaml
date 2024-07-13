@@ -33,7 +33,7 @@ repos:
     entry: poetry run ruff check --force-exclude
     language: python
     types_or: [python, pyi]
-    args: [--config=pyproject.toml]
+    args: [--config=pyproject.toml, --fix]
     require_serial: true
     additional_dependencies: []
     minimum_pre_commit_version: "2.9.2"
