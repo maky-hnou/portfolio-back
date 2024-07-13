@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 
 from sqlalchemy.orm import Mapped, mapped_column
@@ -22,7 +23,7 @@ class TextDataModel(Base):
 
     __tablename__ = "text_data"
 
-    text_id: Mapped[str] = mapped_column(String, primary_key=True)
+    text_id: Mapped[uuid.UUID] = mapped_column(String, primary_key=True)
     filename: Mapped[str] = mapped_column(String)
     text: Mapped[str] = mapped_column(String)
     source: Mapped[str] = mapped_column(String)

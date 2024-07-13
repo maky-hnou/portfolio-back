@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 from uuid import uuid4
 
@@ -23,12 +24,12 @@ class MessageModel(Base):
 
     __tablename__ = "messages"
 
-    message_id: Mapped[str] = mapped_column(
+    message_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         primary_key=True,
         default=uuid4,
     )
-    chat_id: Mapped[str] = mapped_column(
+    chat_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("chats.chat_id", ondelete="CASCADE"),
         nullable=False,

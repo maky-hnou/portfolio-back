@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime
 
 from sqlalchemy.orm import Mapped, mapped_column
@@ -19,6 +20,6 @@ class ChatModel(Base):
 
     __tablename__ = "chats"
 
-    chat_id: Mapped[str] = mapped_column(UUID(as_uuid=True), primary_key=True)
+    chat_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True)
     off_topic_response_count: Mapped[int] = mapped_column(Integer, default=0)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)
