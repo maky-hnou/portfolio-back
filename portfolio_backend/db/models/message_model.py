@@ -8,7 +8,19 @@ from sqlalchemy.sql.sqltypes import UUID, DateTime, String
 from portfolio_backend.db.base import Base
 
 
-class Message(Base):
+class MessageModel(Base):
+    """SQLAlchemy model class representing messages in a chat system.
+
+    Attributes:
+        __tablename__ (str): The name of the database table for messages.
+        message_id (Mapped[str]): Unique identifier for each message, stored as UUID.
+        chat_id (Mapped[str]): Foreign key referencing the chat to which the message belongs.
+        message_text (Mapped[str]): Content of the message.
+        message_by (Mapped[str]): Identifier of the user who sent the message.
+        created_at (Mapped[datetime]): Timestamp indicating when the message was created.
+
+    """
+
     __tablename__ = "messages"
 
     message_id: Mapped[str] = mapped_column(

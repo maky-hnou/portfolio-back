@@ -110,6 +110,8 @@ line-ending = "lf"  # Line ending (choices: "lf", "crlf", "cr")
 # Per-file-ignores
 [tool.ruff.lint.per-file-ignores]
 "*tests/*" = ["D", "N", "S101"]
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.mypy]
 strict = true
