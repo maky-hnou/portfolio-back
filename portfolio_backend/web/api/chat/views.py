@@ -8,7 +8,7 @@ from portfolio_backend.web.api.chat.schema import ChatDTO
 router = APIRouter()
 
 
-@router.get("/chat/{chat_id}", response_model=ChatModel)
+@router.get("/chat/{chat_id}", response_model=ChatDTO)
 async def get_chat(chat_id: str, chat_dao: ChatDAO = Depends()) -> ChatModel | None:
     chat = await chat_dao.get_single_row(model_class=ChatModel, chat_id=chat_id)
     if chat is None:
@@ -16,7 +16,7 @@ async def get_chat(chat_id: str, chat_dao: ChatDAO = Depends()) -> ChatModel | N
     return chat
 
 
-@router.post("/chat/", response_model=ChatModel)
+@router.post("/chat/", response_model=ChatDTO)
 async def create_chat(chat: ChatDTO, chat_dao: ChatDAO = Depends()) -> ChatModel:
     chat_model = ChatModel(**chat.dict())
     await chat_dao.add_single_on_conflict_do_nothing(model_instance=chat_model)

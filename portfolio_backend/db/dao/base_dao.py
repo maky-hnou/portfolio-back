@@ -17,11 +17,16 @@ class BaseDAO:
     def __init__(self, session: AsyncSession = Depends(get_db_session)):
         self.session = session
 
+    def _get_model_data(self, model_instance: ModelInstance) -> dict[str, Any]:
+        """Get a dictionary of model data excluding internal attributes."""
+        columns = model_instance.__table__.columns.keys()
+        return {column: getattr(model_instance, column) for column in columns}
+
     async def add_single_on_conflict_do_nothing(self, model_instance: ModelInstance) -> None:
         """Add a single model instance, do nothing on conflict."""
-        await self.session.execute(
-            pg_insert(model_instance.__class__).values(**model_instance.__dict__).on_conflict_do_nothing()
-        )
+        model_data = self._get_model_data(model_instance)
+        print(model_data)
+        await self.session.execute(pg_insert(model_instance.__class__).values(**model_data).on_conflict_do_nothing())
 
     async def add_single_on_conflict_do_update(self, model_instance: ModelInstance, conflict_column: str) -> None:
         """Add a single model instance, update on conflict."""
