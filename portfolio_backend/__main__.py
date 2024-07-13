@@ -47,7 +47,7 @@ def main() -> None:
     else:
         # We choose gunicorn only if reload
         # option is not used, because reload
-        # feature doen't work with Uvicorn workers.
+        # feature doesn't work with Uvicorn workers.
         GunicornApplication(
             "portfolio_backend.web.application:get_app",
             host=settings.host,
