@@ -52,15 +52,13 @@ class BaseDAO:
             )
             await self.session.execute(update_stmt)
 
-    async def get_single_row(self, model_class: type[ModelInstance], **filters: dict[str, Any]) -> ModelInstance | None:
+    async def get_single_row(self, model_class: type[ModelInstance], **filters: Any) -> ModelInstance | None:
         """Get a single row based on filters."""
         query = select(model_class).filter_by(**filters)
         result = await self.session.execute(query)
         return result.scalars().first()
 
-    async def get_many_rows(
-        self, model_class: type[ModelInstance], **filters: dict[str, Any]
-    ) -> list[ModelInstance | None]:
+    async def get_many_rows(self, model_class: type[ModelInstance], **filters: Any) -> list[ModelInstance | None]:
         """Get multiple rows based on filters."""
         query = select(model_class).filter_by(**filters)
         result = await self.session.execute(query)
@@ -78,14 +76,3 @@ class BaseDAO:
     async def delete_many_rows(self, model_class: type[ModelInstance], **filters: dict[str, Any]) -> None:
         """Delete multiple rows based on filters."""
         await self.session.execute(delete(model_class).filter_by(**filters))
-
-    async def get_many_rows_by_column(
-        self,
-        model_class: type[ModelInstance],
-        column: str,
-        value: Any,
-    ) -> list[ModelInstance | None]:
-        """Get multiple rows based on a specific column value."""
-        query = select(model_class).filter(column == value)
-        result = await self.session.execute(query)
-        return list(result.scalars().fetchall())
