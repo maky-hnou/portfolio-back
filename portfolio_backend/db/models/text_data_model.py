@@ -17,7 +17,6 @@ class TextDataModel(Base):
         source (Mapped[str]): The source or origin of the text data.
         topic (Mapped[str]): The topic or category to which the text data relates.
         created_at (Mapped[datetime]): Timestamp indicating when the text data was created.
-
     """
 
     __tablename__ = "text_data"
