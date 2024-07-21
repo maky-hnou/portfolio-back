@@ -9,15 +9,15 @@ router = APIRouter()
 
 
 @router.get("/chat/{chat_id}", response_model=ChatDTO)
-async def get_chat(chat_id: str, chat_dao: ChatDAO = Depends()) -> ChatModel | None:
+async def get_chat(chat_id: str, chat_dao: ChatDAO = Depends()) -> ChatDTO:
     chat = await chat_dao.get_single_row(model_class=ChatModel, chat_id=chat_id)
     if chat is None:
         raise HTTPException(status_code=404, detail="Chat not found")
-    return chat
+    return ChatDTO.model_validate(chat)
 
 
 @router.post("/chat/", response_model=ChatDTO)
-async def create_chat(chat: ChatDTO, chat_dao: ChatDAO = Depends()) -> ChatModel:
+async def create_chat(chat: ChatDTO, chat_dao: ChatDAO = Depends()) -> ChatDTO:
     chat_model = ChatModel(**chat.dict())
     await chat_dao.add_single_on_conflict_do_nothing(model_instance=chat_model)
-    return chat_model
+    return ChatDTO.model_validate(chat_model)

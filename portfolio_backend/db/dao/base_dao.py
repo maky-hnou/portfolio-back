@@ -25,7 +25,6 @@ class BaseDAO:
     async def add_single_on_conflict_do_nothing(self, model_instance: ModelInstance) -> None:
         """Add a single model instance, do nothing on conflict."""
         model_data = self._get_model_data(model_instance)
-        print(model_data)
         await self.session.execute(pg_insert(model_instance.__class__).values(**model_data).on_conflict_do_nothing())
 
     async def add_single_on_conflict_do_update(self, model_instance: ModelInstance, conflict_column: str) -> None:
