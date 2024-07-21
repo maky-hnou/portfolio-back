@@ -14,7 +14,7 @@ async def get_all_text(text_data_dao: TextDataDAO = Depends()) -> list[TextDataM
 
 
 @router.post("/text_data/", response_model=TextDataDTO)
-async def create_text_data(text_data: TextDataDTO, text_data_dao: TextDataDAO = Depends()) -> TextDataModel:
+async def create_text_data(text_data: TextDataDTO, text_data_dao: TextDataDAO = Depends()) -> TextDataDTO:
     text_data_model = TextDataModel(**text_data.dict())
     await text_data_dao.add_single_on_conflict_do_nothing(model_instance=text_data_model)
-    return text_data_model
+    return TextDataDTO.model_validate(text_data_model)

@@ -1,10 +1,11 @@
 from datetime import datetime
 from uuid import UUID, uuid4
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class TextDataDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     text_id: UUID = Field(default_factory=uuid4)
     filename: str
     text: str

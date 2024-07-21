@@ -17,12 +17,13 @@ async def get_message(message_id: str, message_dao: MessageDAO = Depends()) -> M
 
 
 @router.get("/message/chat/{chat_id}", response_model=list[MessageDTO])
-async def get_all_chat_messages(chat_id: str, message_dao: MessageDAO = Depends()) -> list[MessageModel | None]:
-    return await message_dao.get_many_rows(model_class=MessageModel, chat_id=chat_id)
+async def get_all_chat_messages(chat_id: str, message_dao: MessageDAO = Depends()) -> list[MessageDTO | None]:
+    messages = await message_dao.get_many_rows(model_class=MessageModel, chat_id=chat_id)
+    return [MessageDTO.model_validate(message) for message in messages]
 
 
 @router.post("/message/", response_model=MessageDTO)
-async def create_message(message: MessageDTO, chat_dao: MessageDAO = Depends()) -> MessageModel:
+async def create_message(message: MessageDTO, chat_dao: MessageDAO = Depends()) -> MessageDTO:
     message_model = MessageModel(**message.dict())
     await chat_dao.add_single_on_conflict_do_nothing(model_instance=message_model)
-    return message_model
+    return MessageDTO.model_validate(message_model)
