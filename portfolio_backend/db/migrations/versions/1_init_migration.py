@@ -20,8 +20,8 @@ def upgrade() -> None:
     op.create_table(
         "chats",
         sa.Column("chat_id", sa.UUID(), nullable=False),
-        sa.Column("off_topic_response_count", sa.Integer(), server_default=sa.literal(0), nullable=False),
-        sa.Column("created_at", sa.DateTime(), server_default=sa.func.now(), nullable=False),
+        sa.Column("off_topic_response_count", sa.Integer(), nullable=False),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.PrimaryKeyConstraint("chat_id"),
     )
     op.create_table(
@@ -31,7 +31,7 @@ def upgrade() -> None:
         sa.Column("text", sa.String(), nullable=False),
         sa.Column("source", sa.String(), nullable=False),
         sa.Column("topic", sa.String(), nullable=False),
-        sa.Column("created_at", sa.DateTime(), server_default=sa.func.now(), nullable=False),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.PrimaryKeyConstraint("text_id"),
     )
     op.create_table(
@@ -40,7 +40,7 @@ def upgrade() -> None:
         sa.Column("chat_id", sa.UUID(), nullable=False),
         sa.Column("message_text", sa.String(), nullable=False),
         sa.Column("message_by", sa.String(), nullable=False),
-        sa.Column("created_at", sa.DateTime(), server_default=sa.func.now(), nullable=False),
+        sa.Column("created_at", sa.DateTime(), nullable=False),
         sa.ForeignKeyConstraint(["chat_id"], ["chats.chat_id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("message_id"),
     )
