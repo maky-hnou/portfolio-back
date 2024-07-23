@@ -103,6 +103,7 @@ ignore = [
     "D103",
     "D101",
     "D104",
+    "D102",
 ]
 [tool.ruff.format]
 # Indent with spaces
