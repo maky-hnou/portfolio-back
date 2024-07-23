@@ -33,6 +33,11 @@ class Settings(BaseSettings):
     # Enable uvicorn reloading
     reload: bool = False
 
+    # OpenAI
+    embedding_model: str = "text-embedding-3-small"
+    token_cost: float = 0.001
+    encoding_name: str = "cl100k_base"
+
     # Current environment
     environment: str = "dev"
 
