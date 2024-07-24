@@ -34,8 +34,9 @@ class Settings(BaseSettings):
     reload: bool = False
 
     # OpenAI
+    openai_api_key: str
     embedding_model: str = "text-embedding-3-small"
-    token_cost: float = 0.001
+    token_cost: float = 0.002 / 1000000
     encoding_name: str = "cl100k_base"
 
     # Current environment
