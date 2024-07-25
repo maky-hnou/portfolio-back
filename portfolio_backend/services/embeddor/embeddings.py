@@ -10,13 +10,13 @@ class Embedding:
         self.openai_client = openai_client
 
     @property
-    def tokens(self) -> int:
+    def tokens_count(self) -> int:
         encoding = tiktoken.get_encoding(settings.encoding_name)
         return len(encoding.encode(self.text))
 
     @property
     def estimated_cost(self) -> float:
-        return self.tokens * settings.token_cost
+        return self.tokens_count * settings.token_cost
 
     @property
     def text_embedding(self) -> list[float]:

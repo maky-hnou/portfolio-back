@@ -8,7 +8,7 @@ from portfolio_backend.settings import settings
 
 
 def set_multiproc_dir() -> None:
-    """Set mutiproc_dir env variable.
+    """Set multiproc_dir env variable.
 
     This function cleans up the multiprocess directory
     and recreates it. These actions are required by prometheus-client
