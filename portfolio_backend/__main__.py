@@ -1,10 +1,16 @@
 import os
 import shutil
+from ast import literal_eval
 
 import uvicorn
+from openai import OpenAI
 
 from portfolio_backend.gunicorn_runner import GunicornApplication
+from portfolio_backend.services.embeddor.embeddings import Embedding
 from portfolio_backend.settings import settings
+from portfolio_backend.utils.utils import create_text_df, file_exists, read_from_csv
+from portfolio_backend.vdb.configs import vdb_config
+from portfolio_backend.vdb.milvus_connector import MilvusDB
 
 
 def set_multiproc_dir() -> None:
@@ -31,9 +37,37 @@ def set_multiproc_dir() -> None:
     )
 
 
+def set_vector_db() -> None:
+    vector_db = MilvusDB(db="./portfolio.db")
+    if not vector_db.has_collection(collection_name=vdb_config.collection_name):
+        vector_db.create_collection(
+            collection_name=vdb_config.collection_name,
+            dimension=1536,
+            schema=vdb_config.schema,
+        )
+        if not file_exists(filename="portfolio_backend/static/data/embedded_text.csv"):
+            # Create text_df
+            text_df = create_text_df(parent_path="portfolio_backend/static/data/text_data")
+            openai_client = OpenAI()
+
+            text_df[vdb_config.vector_column] = text_df.apply(
+                lambda x: Embedding(text=x["text"], openai_client=openai_client),
+            )
+
+            text_df.to_csv("portfolio_backend/static/data/embedded_text.csv", index=False)
+        else:
+            # csv file exists
+            text_df = read_from_csv(filename="portfolio_backend/static/data/embedded_text.csv")
+        text_df[vdb_config.vector_column] = text_df[vdb_config.vector_column].apply(literal_eval)
+        vector_db.insert_data(collection_name=vdb_config.collection_name, data=text_df.to_dict("records"))
+    else:
+        print("collection exists!")
+
+
 def main() -> None:
     """Entrypoint of the application."""
     set_multiproc_dir()
+    set_vector_db()
     if settings.reload:
         uvicorn.run(
             "portfolio_backend.web.application:get_app",

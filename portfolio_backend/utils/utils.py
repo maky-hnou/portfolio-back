@@ -8,7 +8,7 @@ def read_from_file(filename: str) -> str:
         return input_file.read()
 
 
-def does_file_exist(filename: str) -> bool:
+def file_exists(filename: str) -> bool:
     return os.path.exists(filename)
 
 
@@ -17,9 +17,14 @@ def read_from_csv(filename: str) -> pd.DataFrame:
 
 
 def create_text_df(parent_path: str) -> pd.DataFrame:
-    text_dict = {}
+    data = []
+    i = 0
     for item in os.listdir(parent_path):
+        text_dict = {}
         if os.path.isfile(os.path.join(parent_path, item)):
             text_dict["topic"] = item.split(".")[0]
             text_dict["text"] = read_from_file(os.path.join(parent_path, item))
-    return pd.DataFrame(text_dict)
+            text_dict["id"] = i  # type: ignore
+            i += 1
+            data.append(text_dict)
+    return pd.DataFrame(data)
