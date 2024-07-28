@@ -3,9 +3,9 @@ from typing import Any
 from pymilvus import MilvusClient
 
 
-class Milvus:
-    def __init__(self, db_name: str):
-        self.client = MilvusClient(db_name=db_name)
+class MilvusDB:
+    def __init__(self, db: str):
+        self.client = MilvusClient(db)
 
     def create_collection(self, collection_name: str, dimension: int) -> None:
         self.client.create_collection(collection_name=collection_name, dimension=dimension)
