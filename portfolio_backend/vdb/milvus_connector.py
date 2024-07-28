@@ -1,14 +1,14 @@
 from typing import Any
 
-from pymilvus import MilvusClient
+from pymilvus import CollectionSchema, MilvusClient
 
 
 class MilvusDB:
     def __init__(self, db: str):
         self.client = MilvusClient(db)
 
-    def create_collection(self, collection_name: str, dimension: int) -> None:
-        self.client.create_collection(collection_name=collection_name, dimension=dimension)
+    def create_collection(self, collection_name: str, dimension: int, schema: CollectionSchema) -> None:
+        self.client.create_collection(collection_name=collection_name, dimension=dimension, schema=schema)
 
     def insert_data(self, collection_name: str, data: list[Any]) -> None:
         self.client.insert(collection_name=collection_name, data=data)

@@ -18,10 +18,13 @@ def read_from_csv(filename: str) -> pd.DataFrame:
 
 def create_text_df(parent_path: str) -> pd.DataFrame:
     data = []
+    i = 0
     for item in os.listdir(parent_path):
         text_dict = {}
         if os.path.isfile(os.path.join(parent_path, item)):
             text_dict["topic"] = item.split(".")[0]
             text_dict["text"] = read_from_file(os.path.join(parent_path, item))
+            text_dict["id"] = i  # type: ignore
+            i += 1
             data.append(text_dict)
     return pd.DataFrame(data)
