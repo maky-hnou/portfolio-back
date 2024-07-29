@@ -1,4 +1,5 @@
 from pymilvus import CollectionSchema, DataType, FieldSchema
+from pymilvus.milvus_client import IndexParams
 
 
 class VDBConfig:
@@ -12,14 +13,19 @@ class VDBConfig:
         ]
         self.vector_db_index = {"index_type": "HNSW", "metric_type": "L2", "params": {"M": 8, "efConstruction": 64}}
         self.topk = 2
-        self.threshold = 0.45
+        self.threshold = 1.5
         self.search_params = {"metric_type": "L2", "params": {"ef": max(64, self.topk)}}
         self.collection_name = "portfolio_data"
+        self.vdb_name = "./portfolio.db"
 
     @property
     def schema(self) -> CollectionSchema:
         fields = [FieldSchema(**field) for field in self.vector_db_fields]
         return CollectionSchema(fields=fields)
+
+    @property
+    def index_params(self) -> IndexParams:
+        return IndexParams(field_name=self.vector_column, **self.vector_db_index)
 
 
 vdb_config = VDBConfig()

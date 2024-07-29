@@ -38,25 +38,27 @@ def set_multiproc_dir() -> None:
 
 
 def set_vector_db() -> None:
-    vector_db = MilvusDB(db="./portfolio.db")
+    vector_db = MilvusDB(db=vdb_config.vdb_name)
     if not vector_db.has_collection(collection_name=vdb_config.collection_name):
         vector_db.create_collection(
             collection_name=vdb_config.collection_name,
             dimension=1536,
             schema=vdb_config.schema,
+            index=vdb_config.index_params,
         )
         if not file_exists(filename="portfolio_backend/static/data/embedded_text.csv"):
             # Create text_df
             text_df = create_text_df(parent_path="portfolio_backend/static/data/text_data")
-            openai_client = OpenAI()
-
+            openai_client = OpenAI(api_key=settings.openai_api_key)
             text_df[vdb_config.vector_column] = text_df.apply(
-                lambda x: Embedding(text=x["text"], openai_client=openai_client),
+                lambda x: Embedding(text=x["text"], openai_client=openai_client).text_embedding,
+                axis=1,
             )
 
             text_df.to_csv("portfolio_backend/static/data/embedded_text.csv", index=False)
         else:
             # csv file exists
+            print("csv file exists")
             text_df = read_from_csv(filename="portfolio_backend/static/data/embedded_text.csv")
         text_df[vdb_config.vector_column] = text_df[vdb_config.vector_column].apply(literal_eval)
         vector_db.insert_data(collection_name=vdb_config.collection_name, data=text_df.to_dict("records"))
@@ -68,6 +70,19 @@ def main() -> None:
     """Entrypoint of the application."""
     set_multiproc_dir()
     set_vector_db()
+    query = "What are Hani diplomas?"
+    openai_client = OpenAI(api_key=settings.openai_api_key)
+    query_embedding = Embedding(text=query, openai_client=openai_client)
+    vector_db = MilvusDB(db=vdb_config.vdb_name)
+    answer = vector_db.search(
+        collection_name=vdb_config.collection_name,
+        search_data=[query_embedding.text_embedding],
+        limit=vdb_config.topk,
+        output_fields=["text"],
+        search_params=vdb_config.search_params,
+        threshold=vdb_config.threshold,
+    )
+    print(f"answer: {answer}")
     if settings.reload:
         uvicorn.run(
             "portfolio_backend.web.application:get_app",
