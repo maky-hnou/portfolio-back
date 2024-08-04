@@ -3,7 +3,7 @@ import shutil
 from ast import literal_eval
 
 import uvicorn
-from openai import OpenAI
+from langchain_openai import OpenAIEmbeddings
 
 from portfolio_backend.gunicorn_runner import GunicornApplication
 from portfolio_backend.services.embeddor.embeddings import Embedding
@@ -49,9 +49,9 @@ def set_vector_db() -> None:
         if not file_exists(filename="portfolio_backend/static/data/embedded_text.csv"):
             # Create text_df
             text_df = create_text_df(parent_path="portfolio_backend/static/data/text_data")
-            openai_client = OpenAI(api_key=settings.openai_api_key)
+            embedding_model = OpenAIEmbeddings(model=settings.embedding_model, openai_api_key=settings.openai_api_key)
             text_df[vdb_config.vector_column] = text_df.apply(
-                lambda x: Embedding(text=x["text"], openai_client=openai_client).text_embedding,
+                lambda x: Embedding(text=x["text"], embedding_model=embedding_model).text_embedding,
                 axis=1,
             )
 
@@ -71,8 +71,8 @@ def main() -> None:
     set_multiproc_dir()
     set_vector_db()
     query = "What are Hani diplomas?"
-    openai_client = OpenAI(api_key=settings.openai_api_key)
-    query_embedding = Embedding(text=query, openai_client=openai_client)
+    embedding_model = OpenAIEmbeddings(model=settings.embedding_model, openai_api_key=settings.openai_api_key)
+    query_embedding = Embedding(text=query, embedding_model=embedding_model)
     vector_db = MilvusDB(db=vdb_config.vdb_name)
     answer = vector_db.search(
         collection_name=vdb_config.collection_name,
