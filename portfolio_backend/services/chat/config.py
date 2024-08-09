@@ -8,4 +8,6 @@ You have sent {off_topic_count} out of 3 off-topic messages. After the 3rd insta
 ai_first_message = "Welcome to the chat, feel free to ask any question about Hani, and I'll do my best to answer."
 
 limit_out_of_topic_message = "You reached 3 out of topic messages. This chat is terminated."
-limit_length_message = "You reached the maximum length for a single conversation. This conversation has been terminated."
+limit_length_message = (
+    "You reached the maximum length for a single conversation. This conversation has been terminated."
+)
