@@ -13,7 +13,7 @@ async def get_all_text(text_data_dao: TextDataDAO = Depends()) -> list[TextDataM
     return await text_data_dao.get_all_rows(model_class=TextDataModel)
 
 
-@router.post("/text_data/", response_model=TextDataDTO)
+@router.post("/text_data", response_model=TextDataDTO)
 async def create_text_data(text_data: TextDataDTO, text_data_dao: TextDataDAO = Depends()) -> TextDataDTO:
     text_data_model = TextDataModel(**text_data.dict())
     await text_data_dao.add_single_on_conflict_do_nothing(model_instance=text_data_model)
