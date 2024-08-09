@@ -28,7 +28,7 @@ class ChatHandler:
         self.llm_model = llm_model
         self.embedding_model = OpenAIEmbeddings(model=settings.embedding_model, openai_api_key=settings.openai_api_key)
         self.config = {"configurable": {"session_id": str(uuid4())}}
-        self.store = {}
+        self.store = {}  # type: ignore
         self.prompt = ChatPromptTemplate.from_messages(
             [
                 (
