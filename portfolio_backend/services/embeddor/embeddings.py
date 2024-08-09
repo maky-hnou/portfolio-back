@@ -1,13 +1,15 @@
 import tiktoken
-from openai import OpenAI
+from langchain_openai import OpenAIEmbeddings
 
 from portfolio_backend.settings import settings
 
 
 class Embedding:
-    def __init__(self, text: str, openai_client: OpenAI):
+    def __init__(self, text: str, embedding_model: OpenAIEmbeddings | None = None):
         self.text = text.replace("\n", " ")
-        self.openai_client = openai_client
+        if not embedding_model:
+            embedding_model = OpenAIEmbeddings(model=settings.embedding_model, openai_api_key=settings.openai_api_key)
+        self.embedding_model = embedding_model
 
     @property
     def tokens_count(self) -> int:
@@ -20,4 +22,4 @@ class Embedding:
 
     @property
     def text_embedding(self) -> list[float]:
-        return self.openai_client.embeddings.create(input=[self.text], model=settings.embedding_model).data[0].embedding
+        return self.embedding_model.embed_query(text=self.text)

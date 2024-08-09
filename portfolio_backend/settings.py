@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     """
 
     host: str = "127.0.0.1"
-    port: int = 8000
+    port: int = 5000
     # quantity of workers for uvicorn
     workers_count: int = 1
     # Enable uvicorn reloading
@@ -36,6 +36,7 @@ class Settings(BaseSettings):
     # OpenAI
     openai_api_key: str
     embedding_model: str = "text-embedding-3-small"
+    chat_model: str = "gpt-4o-mini"
     token_cost: float = 0.002 / 1000000
     encoding_name: str = "cl100k_base"
 

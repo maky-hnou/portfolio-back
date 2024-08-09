@@ -4,6 +4,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.responses import UJSONResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.middleware.cors import CORSMiddleware
 
 from portfolio_backend.logging import configure_logging
 from portfolio_backend.web.api.router import api_router
@@ -44,6 +45,15 @@ def get_app() -> FastAPI:
         "/static",
         StaticFiles(directory=APP_ROOT / "static"),
         name="static",
+    )
+
+    # Set CORS
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        # allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
 
     return app

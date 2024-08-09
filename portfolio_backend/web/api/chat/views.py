@@ -16,8 +16,9 @@ async def get_chat(chat_id: str, chat_dao: ChatDAO = Depends()) -> ChatDTO:
     return ChatDTO.model_validate(chat)
 
 
-@router.post("/chat/", response_model=ChatDTO)
+@router.post("/chat", response_model=ChatDTO)
 async def create_chat(chat: ChatDTO, chat_dao: ChatDAO = Depends()) -> ChatDTO:
     chat_model = ChatModel(**chat.dict())
     await chat_dao.add_single_on_conflict_do_nothing(model_instance=chat_model)
+    print(f"Chat: {ChatDTO.model_validate(chat_model)}")
     return ChatDTO.model_validate(chat_model)
