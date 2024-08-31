@@ -9,7 +9,6 @@ from portfolio_backend.services.chat.chat_handler import ChatHandler
 from portfolio_backend.services.chat.dependencies import get_chat_handler
 from portfolio_backend.web.api.message.schema import MessageBy, MessageDTO
 
-
 router = APIRouter()
 
 
@@ -56,5 +55,4 @@ async def create_message(
     if ai_response.get("off_topic_response_count") != chat.off_topic_response_count:
         chat.off_topic_response_count = ai_response.get("off_topic_response_count")
         await chat_dao.add_single_on_conflict_do_update(model_instance=chat, conflict_column="chat_id")
-    ai_message = MessageDTO(chat_id=chat.chat_id, message_text=ai_response.get("ai_message"), message_by=MessageBy.AI)
-    return ai_message
+    return MessageDTO(chat_id=chat.chat_id, message_text=ai_response.get("ai_message"), message_by=MessageBy.AI)

@@ -63,7 +63,7 @@ def register_startup_event(app: FastAPI) -> Callable[[], Awaitable[None]]:  # pr
     return _startup
 
 
-def register_shutdown_event(app: FastAPI,) -> Callable[[], Awaitable[None]]:  # pragma: no cover
+def register_shutdown_event(app: FastAPI) -> Callable[[], Awaitable[None]]:  # pragma: no cover
     """Actions to run on application's shutdown.
 
     :param app: fastAPI application.

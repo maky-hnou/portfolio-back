@@ -44,7 +44,7 @@ class BaseDAO:
             models_data = [self._get_model_data(model_instance=model_instance) for model_instance in model_instances]
             await self.session.execute(
                 pg_insert(model_instances[0].__class__)
-                .values([model for model in models_data])
+                .values(models_data)
                 .on_conflict_do_nothing()
             )
 
@@ -52,9 +52,7 @@ class BaseDAO:
         """Add multiple model instances, update on conflict."""
         if model_instances:
             models_data = [self._get_model_data(model_instance=model_instance) for model_instance in model_instances]
-            insert_stmt = pg_insert(models_data[0].__class__).values(
-                [model for model in models_data]
-            )
+            insert_stmt = pg_insert(models_data[0].__class__).values(models_data)
             update_stmt = insert_stmt.on_conflict_do_update(
                 index_elements=[conflict_column],
                 set_={k: insert_stmt.excluded[k] for k in models_data[0].keys()},  # noqa SIM118

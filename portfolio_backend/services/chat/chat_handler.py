@@ -3,22 +3,22 @@
 # use the chat_id from the message to retrieve all the messages of the chat from the DB
 #
 
-from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
+from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
+from portfolio_backend.services.chat.config import (
+    limit_length_message,
+    limit_out_of_topic_message,
+    messages_limit,
+    off_topic_count_limit,
+    off_topic_response,
+    prompt,
+)
 from portfolio_backend.services.embeddor.embeddings import Embedding
 from portfolio_backend.settings import settings
 from portfolio_backend.vdb.configs import vdb_config
 from portfolio_backend.vdb.milvus_connector import MilvusDB
-from portfolio_backend.web.api.message.schema import MessageDTO, MessageBy
-from portfolio_backend.services.chat.config import (
-    prompt,
-    messages_limit,
-    off_topic_response,
-    limit_length_message,
-    limit_out_of_topic_message,
-    off_topic_count_limit,
-)
+from portfolio_backend.web.api.message.schema import MessageBy, MessageDTO
 
 
 class ChatHandler:
@@ -29,13 +29,14 @@ class ChatHandler:
         self.embedding_model = OpenAIEmbeddings(model=settings.embedding_model, openai_api_key=settings.openai_api_key)
 
     @staticmethod
-    def _format_message(message: MessageDTO):
+    def _format_message(message: MessageDTO) -> BaseMessage:
         if message.message_by == MessageBy.HUMAN:
             return HumanMessage(content=message.message_text)
-        elif message.message_by == MessageBy.AI:
+        if message.message_by == MessageBy.AI:
             return AIMessage(content=message.message_text)
-        elif message.message_by == MessageBy.SYSTEM:
+        if message.message_by == MessageBy.SYSTEM:
             return SystemMessage(content=message.message_text)
+        raise ValueError(f"Unexpected message_by value: {message.message_by}")
 
     async def handle_chat(
             self,

@@ -8,8 +8,8 @@
 # """
 
 prompt = """
-Your task is to engage in conversation using only the provided CONTEXT. Answer questions strictly based on this 
-context and the current conversation. For off-topic, offensive messages or irrelevant questions, reply with: "None".
+Your task is to engage in conversation using only the provided CONTEXT. Answer questions strictly based on this
+ context and the current conversation. For off-topic, offensive messages or irrelevant questions, reply with: "None".
 
 Context: {context}
 """
