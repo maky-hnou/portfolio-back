@@ -34,14 +34,14 @@ pymilvus = "^2.4.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.2.1"
-mypy = "^1.1.1"
+mypy = "^1.11.2"
 pre-commit = "^3.0.1"
 wemake-python-styleguide = "^0.17.0"
 pytest-cov = "^4.0.0"
 anyio = "^3.6.2"
 pytest-env = "^0.8.1"
 httpx = "^0.23.3"
-ruff = "^0.5.1"
+ruff = "^0.5.7"
 
 [tool.ruff]
 # Exclude a variety of commonly ignored directories.
