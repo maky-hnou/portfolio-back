@@ -1,10 +1,10 @@
 import re
 from datetime import datetime
 from enum import Enum
-from typing import Any
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic_core.core_schema import ValidationInfo
 
 
 class MessageBy(str, Enum):
@@ -22,13 +22,12 @@ class MessageDTO(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
     @field_validator("message_text", mode="before")
-    def replace_pronouns(cls, v: str, values: Any) -> str:
+    @classmethod
+    def replace_pronouns(cls: type["MessageDTO"], v: str, values: ValidationInfo) -> str:
         if values.data.get("message_by") == "human":
-            print(f"human, so editing {v}")
             return re.sub(
                 r"\b(he|him|his)\b",
                 lambda match: "Hani" if match.group(0) in {"he", "him"} else "Hani's",
                 v,
             )
-        print(f"ai, so not editing {v}")
         return v

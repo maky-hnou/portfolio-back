@@ -5,9 +5,9 @@ from portfolio_backend.db.dao.chat_dao import ChatDAO
 from portfolio_backend.db.dao.message_dao import MessageDAO
 from portfolio_backend.db.models.chat_model import ChatModel
 from portfolio_backend.db.models.message_model import MessageModel
-from portfolio_backend.services.chat.config import prompt, general_context, ai_first_message
+from portfolio_backend.services.chat.config import ai_first_message, general_context, prompt
 from portfolio_backend.web.api.chat.schema import ChatDTO
-from portfolio_backend.web.api.message.schema import MessageDTO, MessageBy
+from portfolio_backend.web.api.message.schema import MessageBy, MessageDTO
 
 router = APIRouter()
 

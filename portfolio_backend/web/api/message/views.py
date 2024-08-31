@@ -9,7 +9,6 @@ from portfolio_backend.services.chat.chat_handler import ChatHandler
 from portfolio_backend.services.chat.dependencies import get_chat_handler
 from portfolio_backend.web.api.message.schema import MessageBy, MessageDTO
 
-
 router = APIRouter()
 
 
@@ -44,17 +43,31 @@ async def create_message(
     ai_response = await chat_handler.handle_chat(
         conversation=conversation_dto,
         human_message=human_message,
-        off_topic_response_count=chat.off_topic_response_count,
+        off_topic_response_count=chat.off_topic_response_count,  # type: ignore
     )
     messages = [MessageModel(**human_message.dict())]
     if ai_response.get("system_message"):
-        system_message = ai_response.get("system_message")
+        system_message = MessageDTO(
+            chat_id=chat.chat_id,  # type: ignore
+            message_text=ai_response.get("system_message"),  # type: ignore
+            message_by=MessageBy.SYSTEM,
+        )
         messages.append(MessageModel(**system_message.dict()))
-    ai_message = MessageDTO(chat_id=chat.chat_id, message_text=ai_response.get("ai_message"), message_by=MessageBy.AI)
+    ai_message = MessageDTO(
+        chat_id=chat.chat_id,  # type: ignore
+        message_text=ai_response.get("ai_message"),  # type: ignore
+        message_by=MessageBy.AI,
+    )
     messages.append(MessageModel(**ai_message.dict()))
     await message_dao.add_many_on_conflict_do_nothing(model_instances=messages)
-    if ai_response.get("off_topic_response_count") != chat.off_topic_response_count:
-        chat.off_topic_response_count = ai_response.get("off_topic_response_count")
-        await chat_dao.add_single_on_conflict_do_update(model_instance=chat, conflict_column="chat_id")
-    ai_message = MessageDTO(chat_id=chat.chat_id, message_text=ai_response.get("ai_message"), message_by=MessageBy.AI)
-    return ai_message
+    if ai_response.get("off_topic_response_count") != chat.off_topic_response_count:  # type: ignore
+        chat.off_topic_response_count = ai_response.get("off_topic_response_count")  # type: ignore
+        await chat_dao.add_single_on_conflict_do_update(
+            model_instance=chat,
+            conflict_column="chat_id",
+        )  # type: ignore
+    return MessageDTO(
+        chat_id=chat.chat_id,  # type: ignore
+        message_text=ai_response.get("ai_message"),  # type: ignore
+        message_by=MessageBy.AI,
+    )

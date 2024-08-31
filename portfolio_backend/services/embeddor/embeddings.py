@@ -8,7 +8,10 @@ class Embedding:
     def __init__(self, text: str, embedding_model: OpenAIEmbeddings | None = None):
         self.text = text.replace("\n", " ")
         if not embedding_model:
-            embedding_model = OpenAIEmbeddings(model=settings.embedding_model, openai_api_key=settings.openai_api_key)
+            embedding_model = OpenAIEmbeddings(
+                model=settings.embedding_model,
+                openai_api_key=settings.openai_api_key,  # type: ignore
+            )
         self.embedding_model = embedding_model
 
     @property
