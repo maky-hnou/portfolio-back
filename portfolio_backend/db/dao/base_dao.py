@@ -29,30 +29,35 @@ class BaseDAO:
 
     async def add_single_on_conflict_do_update(self, model_instance: ModelInstance, conflict_column: str) -> None:
         """Add a single model instance, update on conflict."""
-        await self.session.execute(
-            pg_insert(model_instance.__class__)
-            .values(**model_instance.__dict__)
-            .on_conflict_do_update(index_elements=[conflict_column], set_=model_instance.__dict__)
+        model_data = self._get_model_data(model_instance)
+
+        insert_stmt = pg_insert(model_instance.__class__).values(**model_data)
+        update_stmt = insert_stmt.on_conflict_do_update(
+            index_elements=[conflict_column],
+            set_={k: insert_stmt.excluded[k] for k in model_data.keys()},  # noqa SIM118
         )
+        await self.session.execute(update_stmt)
 
     async def add_many_on_conflict_do_nothing(self, model_instances: list[ModelInstance]) -> None:
         """Add multiple model instances, do nothing on conflict."""
         if model_instances:
+            models_data = [self._get_model_data(model_instance=model_instance) for model_instance in model_instances]
             await self.session.execute(
                 pg_insert(model_instances[0].__class__)
-                .values([instance.__dict__ for instance in model_instances])
+                .values([model for model in models_data])
                 .on_conflict_do_nothing()
             )
 
     async def add_many_on_conflict_do_update(self, model_instances: list[ModelInstance], conflict_column: str) -> None:
         """Add multiple model instances, update on conflict."""
         if model_instances:
-            insert_stmt = pg_insert(model_instances[0].__class__).values(
-                [instance.__dict__ for instance in model_instances]
+            models_data = [self._get_model_data(model_instance=model_instance) for model_instance in model_instances]
+            insert_stmt = pg_insert(models_data[0].__class__).values(
+                [model for model in models_data]
             )
             update_stmt = insert_stmt.on_conflict_do_update(
                 index_elements=[conflict_column],
-                set_={k: insert_stmt.excluded[k] for k in model_instances[0].__dict__.keys()},  # noqa SIM118
+                set_={k: insert_stmt.excluded[k] for k in models_data[0].keys()},  # noqa SIM118
             )
             await self.session.execute(update_stmt)
 
@@ -64,7 +69,7 @@ class BaseDAO:
 
     async def get_many_rows(self, model_class: type[ModelInstance], **filters: Any) -> list[ModelInstance | None]:
         """Get multiple rows based on filters."""
-        query = select(model_class).filter_by(**filters)
+        query = select(model_class).filter_by(**filters).order_by(model_class.created_at)
         result = await self.session.execute(query)
         return list(result.scalars().fetchall())
 
