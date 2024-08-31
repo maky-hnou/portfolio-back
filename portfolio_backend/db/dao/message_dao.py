@@ -15,10 +15,10 @@ class MessageDAO(BaseDAO):
     def __init__(self, session: AsyncSession = Depends(get_db_session)):
         super().__init__(session)
 
-    async def get_many_rows(
+    async def get_many_rows(  # type: ignore
         self,
         model_class: type[MessageModel],
-        message_by: list[str] = None,
+        message_by: list[str] | None = None,
         **filters: Any,
     ) -> list[MessageModel | None]:
         """Get multiple rows based on filters and an optional message_by filter."""

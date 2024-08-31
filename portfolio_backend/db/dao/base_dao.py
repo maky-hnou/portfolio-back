@@ -43,9 +43,7 @@ class BaseDAO:
         if model_instances:
             models_data = [self._get_model_data(model_instance=model_instance) for model_instance in model_instances]
             await self.session.execute(
-                pg_insert(model_instances[0].__class__)
-                .values(models_data)
-                .on_conflict_do_nothing()
+                pg_insert(model_instances[0].__class__).values(models_data).on_conflict_do_nothing()
             )
 
     async def add_many_on_conflict_do_update(self, model_instances: list[ModelInstance], conflict_column: str) -> None:
@@ -67,7 +65,7 @@ class BaseDAO:
 
     async def get_many_rows(self, model_class: type[ModelInstance], **filters: Any) -> list[ModelInstance | None]:
         """Get multiple rows based on filters."""
-        query = select(model_class).filter_by(**filters).order_by(model_class.created_at)
+        query = select(model_class).filter_by(**filters).order_by(model_class.created_at)  # type: ignore
         result = await self.session.execute(query)
         return list(result.scalars().fetchall())
 

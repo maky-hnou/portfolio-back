@@ -26,7 +26,10 @@ class ChatHandler:
         print("Init ChatHandler")
         self.llm_model = llm_model
         self.milvus_db = milvus_db
-        self.embedding_model = OpenAIEmbeddings(model=settings.embedding_model, openai_api_key=settings.openai_api_key)
+        self.embedding_model = OpenAIEmbeddings(
+            model=settings.embedding_model,
+            openai_api_key=settings.openai_api_key,  # type: ignore
+        )
 
     @staticmethod
     def _format_message(message: MessageDTO) -> BaseMessage:
@@ -38,12 +41,26 @@ class ChatHandler:
             return SystemMessage(content=message.message_text)
         raise ValueError(f"Unexpected message_by value: {message.message_by}")
 
+    def _update_conversation(
+        self,
+        old_conversation: list[MessageDTO],
+        human_query: MessageDTO,
+        system_message: str,
+    ) -> list[BaseMessage]:
+        old_conversation.append(human_query)
+        # recreate the conversation by creating a list of responses (by system, ai, human)
+        formatted_conversation = []
+        for message in old_conversation:
+            formatted_conversation.append(self._format_message(message=message))
+        formatted_conversation.append(SystemMessage(system_message))
+        return formatted_conversation
+
     async def handle_chat(
-            self,
-            conversation: list[MessageDTO],
-            human_message: MessageDTO,
-            off_topic_response_count: int
-    ) -> dict[str, str | None | MessageDTO | int]:
+        self,
+        conversation: list[MessageDTO],
+        human_message: MessageDTO,
+        off_topic_response_count: int,
+    ) -> dict[str, str | None | int]:
         # if len messages > 30, return limit length message
         if len(conversation) > messages_limit:
             ai_message = limit_length_message
@@ -58,22 +75,16 @@ class ChatHandler:
                 output_fields=["text"],
                 search_params=vdb_config.search_params,
                 threshold=vdb_config.threshold,
-
             )
-            system_message = MessageDTO(
-                chat_id=human_message.chat_id,
-                message_text=prompt.format(context=query_result),
-                message_by=MessageBy.SYSTEM,
+            system_message = prompt.format(context=query_result)
+            formatted_conversation = self._update_conversation(
+                old_conversation=conversation,
+                human_query=human_message,
+                system_message=system_message,
             )
-            conversation.append(human_message)
-            conversation.append(system_message)
-            # recreate the conversation by creating a list of responses (by system, ai, human)
-            formatted_conversation = []
-            for message in conversation:
-                formatted_conversation.append(self._format_message(message=message))
             # send the conversation to openai api and get the response
             response = self.llm_model.invoke(input=formatted_conversation)
-            ai_message = response.content
+            ai_message = response.content  # type: ignore
             # if the response is None, increment off-topic count and send off-topic message as response
             if "none" in ai_message.lower():
                 off_topic_response_count += 1

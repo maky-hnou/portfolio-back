@@ -7,6 +7,6 @@ from portfolio_backend.vdb.dependencies import get_milvus_db
 from portfolio_backend.vdb.milvus_connector import MilvusDB
 
 
-def get_chat_handler(milvus_db: MilvusDB = Depends(get_milvus_db)) -> ChatHandler:
-    model = ChatOpenAI(model=settings.chat_model, api_key=settings.openai_api_key)
+def get_chat_handler(milvus_db: MilvusDB = Depends(get_milvus_db)) -> ChatHandler:  # type: ignore
+    model = ChatOpenAI(model=settings.chat_model, api_key=settings.openai_api_key)  # type: ignore
     return ChatHandler(llm_model=model, milvus_db=milvus_db)

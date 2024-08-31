@@ -49,7 +49,10 @@ def set_vector_db() -> None:
         if not file_exists(filename="portfolio_backend/static/data/embedded_text.csv"):
             # Create text_df
             text_df = create_text_df(parent_path="portfolio_backend/static/data/text_data")
-            embedding_model = OpenAIEmbeddings(model=settings.embedding_model, openai_api_key=settings.openai_api_key)
+            embedding_model = OpenAIEmbeddings(
+                model=settings.embedding_model,
+                openai_api_key=settings.openai_api_key,  # type: ignore
+            )
             text_df[vdb_config.vector_column] = text_df.apply(
                 lambda x: Embedding(text=x["text"], embedding_model=embedding_model).text_embedding,
                 axis=1,
