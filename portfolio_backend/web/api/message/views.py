@@ -1,18 +1,16 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.param_functions import Depends
-from langchain_openai import ChatOpenAI
 
 from portfolio_backend.db.dao.chat_dao import ChatDAO
 from portfolio_backend.db.dao.message_dao import MessageDAO
 from portfolio_backend.db.models.chat_model import ChatModel
 from portfolio_backend.db.models.message_model import MessageModel
 from portfolio_backend.services.chat.chat_handler import ChatHandler
-from portfolio_backend.settings import settings
+from portfolio_backend.services.chat.dependencies import get_chat_handler
 from portfolio_backend.web.api.message.schema import MessageBy, MessageDTO
 
+
 router = APIRouter()
-model = ChatOpenAI(model=settings.chat_model, api_key=settings.openai_api_key)
-chat_handler = ChatHandler(llm_model=model)
 
 
 @router.get("/message/{message_id}", response_model=MessageDTO)
@@ -31,17 +29,32 @@ async def get_all_chat_messages(chat_id: str, message_dao: MessageDAO = Depends(
 
 @router.post("/message", response_model=MessageDTO)
 async def create_message(
-    message: MessageDTO, message_dao: MessageDAO = Depends(), chat_dao: ChatDAO = Depends()
+    human_message: MessageDTO,
+    message_dao: MessageDAO = Depends(),
+    chat_dao: ChatDAO = Depends(),
+    chat_handler: ChatHandler = Depends(get_chat_handler),
 ) -> MessageDTO:
-    print(f"Message: {message}")
-    message_model = MessageModel(**message.dict())
-    chat = await chat_dao.get_single_row(model_class=ChatModel, chat_id=message.chat_id)
-    await message_dao.add_single_on_conflict_do_nothing(model_instance=message_model)
-    ai_response = await chat_handler.handle_chat(
-        message=message, off_topic_response_count=chat.off_topic_response_count
+    chat = await chat_dao.get_single_row(model_class=ChatModel, chat_id=human_message.chat_id)
+    conversation = await message_dao.get_many_rows(
+        model_class=MessageModel,
+        chat_id=human_message.chat_id,
+        message_by=[MessageBy.HUMAN, MessageBy.AI],
     )
+    conversation_dto = [MessageDTO.model_validate(message) for message in conversation]
+    ai_response = await chat_handler.handle_chat(
+        conversation=conversation_dto,
+        human_message=human_message,
+        off_topic_response_count=chat.off_topic_response_count,
+    )
+    messages = [MessageModel(**human_message.dict())]
+    if ai_response.get("system_message"):
+        system_message = ai_response.get("system_message")
+        messages.append(MessageModel(**system_message.dict()))
+    ai_message = MessageDTO(chat_id=chat.chat_id, message_text=ai_response.get("ai_message"), message_by=MessageBy.AI)
+    messages.append(MessageModel(**ai_message.dict()))
+    await message_dao.add_many_on_conflict_do_nothing(model_instances=messages)
     if ai_response.get("off_topic_response_count") != chat.off_topic_response_count:
         chat.off_topic_response_count = ai_response.get("off_topic_response_count")
         await chat_dao.add_single_on_conflict_do_update(model_instance=chat, conflict_column="chat_id")
-    ai_message = MessageDTO(chat_id=chat.chat_id, message_text=ai_response.get("ai_response"), message_by=MessageBy.AI)
+    ai_message = MessageDTO(chat_id=chat.chat_id, message_text=ai_response.get("ai_message"), message_by=MessageBy.AI)
     return ai_message

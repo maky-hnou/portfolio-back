@@ -51,7 +51,10 @@ class MilvusDB:
         return result
 
     def query(
-        self, collection_name: str, output_fields: list[str], query_filter: str | None = None
+        self,
+        collection_name: str,
+        output_fields: list[str],
+        query_filter: str | None = None,
     ) -> list[dict[Any, Any]]:
         return self.client.query(
             collection_name=collection_name,

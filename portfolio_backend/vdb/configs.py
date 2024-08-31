@@ -11,10 +11,10 @@ class VDBConfig:
             {"name": "text", "dtype": DataType.VARCHAR, "max_length": 10000},
             {"name": "topic", "dtype": DataType.VARCHAR, "max_length": 100},
         ]
-        self.vector_db_index = {"index_type": "HNSW", "metric_type": "L2", "params": {"M": 8, "efConstruction": 64}}
+        self.vector_db_index = {"index_type": "FLAT", "metric_type": "L2", "params": {}}
         self.topk = 2
         self.threshold = 1.5
-        self.search_params = {"metric_type": "L2", "params": {"ef": max(64, self.topk)}}
+        self.search_params = {"metric_type": "L2", "params": {}}
         self.collection_name = "portfolio_data"
         self.vdb_name = "./portfolio.db"
 
