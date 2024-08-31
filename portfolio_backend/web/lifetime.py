@@ -7,6 +7,8 @@ from prometheus_fastapi_instrumentator.instrumentation import (
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from portfolio_backend.settings import settings
+from portfolio_backend.vdb.configs import vdb_config
+from portfolio_backend.vdb.milvus_connector import MilvusDB
 
 
 def _setup_db(app: FastAPI) -> None:  # pragma: no cover
@@ -26,6 +28,9 @@ def _setup_db(app: FastAPI) -> None:  # pragma: no cover
     app.state.db_engine = engine
     app.state.db_session_factory = session_factory
 
+    # Initialize Milvus DB
+    app.state.milvus_db = MilvusDB(db=vdb_config.vdb_name)
+
 
 def setup_prometheus(app: FastAPI) -> None:  # pragma: no cover
     """Enable prometheus integration.
@@ -37,9 +42,7 @@ def setup_prometheus(app: FastAPI) -> None:  # pragma: no cover
     ).expose(app, should_gzip=True, name="prometheus_metrics")
 
 
-def register_startup_event(
-    app: FastAPI,
-) -> Callable[[], Awaitable[None]]:  # pragma: no cover
+def register_startup_event(app: FastAPI) -> Callable[[], Awaitable[None]]:  # pragma: no cover
     """Actions to run on application startup.
 
     This function uses fastAPI app to store data
@@ -60,9 +63,7 @@ def register_startup_event(
     return _startup
 
 
-def register_shutdown_event(
-    app: FastAPI,
-) -> Callable[[], Awaitable[None]]:  # pragma: no cover
+def register_shutdown_event(app: FastAPI,) -> Callable[[], Awaitable[None]]:  # pragma: no cover
     """Actions to run on application's shutdown.
 
     :param app: fastAPI application.
@@ -72,6 +73,7 @@ def register_shutdown_event(
     @app.on_event("shutdown")
     async def _shutdown() -> None:  # noqa: WPS430
         await app.state.db_engine.dispose()
+        app.state.milvus_db.close_connection()
 
         pass  # noqa: WPS420
 
