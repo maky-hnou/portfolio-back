@@ -70,19 +70,6 @@ def main() -> None:
     """Entrypoint of the application."""
     set_multiproc_dir()
     set_vector_db()
-    # query = "What are Hani diplomas?"
-    # embedding_model = OpenAIEmbeddings(model=settings.embedding_model, openai_api_key=settings.openai_api_key)
-    # query_embedding = Embedding(text=query, embedding_model=embedding_model)
-    # vector_db = MilvusDB(db=vdb_config.vdb_name)
-    # answer = vector_db.search(
-    #     collection_name=vdb_config.collection_name,
-    #     search_data=[query_embedding.text_embedding],
-    #     limit=vdb_config.topk,
-    #     output_fields=["text"],
-    #     search_params=vdb_config.search_params,
-    #     threshold=vdb_config.threshold,
-    # )
-    # print(f"answer: {answer}")
     if settings.reload:
         uvicorn.run(
             "portfolio_backend.web.application:get_app",
@@ -94,9 +81,8 @@ def main() -> None:
             factory=True,
         )
     else:
-        # We choose gunicorn only if reload
-        # option is not used, because reload
-        # feature doesn't work with Uvicorn workers.
+        # We choose gunicorn only if reload option is not used, because reload feature doesn't work with Uvicorn
+        # workers.
         GunicornApplication(
             "portfolio_backend.web.application:get_app",
             host=settings.host,
