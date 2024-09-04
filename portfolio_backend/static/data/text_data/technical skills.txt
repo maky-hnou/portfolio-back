@@ -1,0 +1,18 @@
+My technical skills include:
+• Programming Languages: Python, JavaScript
+• OS: Linux
+• Version Control: Git
+• Databases: MySQL, PostgreSQL, Redshift, Milvus, Neo4j
+• CI/CD: Jenkins
+• Containerization: Docker
+• Cloud: AWS
+• Workflow Automation: Apache Airflow
+• Data Analysis Frameworks/Libraries: Pandas, Numpy, PySpark, Matplotlib
+• WebDev Frameworks/Libraries:
+
+Back-end: FastAPI, Flask, Django
+Front-end: React JS
+• ORMS: SQLAlchemy
+• Testing: Pytest
+• AI Frameworks/Libraries & Tech: TensorFlow, OpenCV, Keras, Pytorch, GenAI, LLMs
+• Infrastructure As Code: Terraform
