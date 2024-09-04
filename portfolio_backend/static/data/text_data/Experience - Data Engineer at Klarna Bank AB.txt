@@ -1,0 +1,1 @@
+My following experience was a Data Engineer at Klarna Bank AB, Sweden, from May 2022 to May 2023. In this role, I designed and built data pipelines, redesigned ETL processes for better performance, managed third-party integrations, and developed interactive dashboards to support executive decision-making.

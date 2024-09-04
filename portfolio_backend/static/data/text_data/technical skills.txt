@@ -1,4 +1,4 @@
-Technical Skills:
+My technical skills include:
 • Programming Languages: Python, JavaScript
 • OS: Linux
 • Version Control: Git
@@ -6,22 +6,13 @@ Technical Skills:
 • CI/CD: Jenkins
 • Containerization: Docker
 • Cloud: AWS
-• Workflow automation: Apache Airflow
-
-• Data Analysis Frameworks/Libraries: Pandas, Numpy, PySpark, matplotlib
+• Workflow Automation: Apache Airflow
+• Data Analysis Frameworks/Libraries: Pandas, Numpy, PySpark, Matplotlib
 • WebDev Frameworks/Libraries:
- - Back-end: FastAPI, Flask, Django
- - Front-end: React JS
+
+Back-end: FastAPI, Flask, Django
+Front-end: React JS
 • ORMS: SQLAlchemy
 • Testing: Pytest
-• AI Frameworks/Libraries & tech: TensoFlow, OpenCV, Keras, Pytorch, GenAI, LLMs
+• AI Frameworks/Libraries & Tech: TensorFlow, OpenCV, Keras, Pytorch, GenAI, LLMs
 • Infrastructure As Code: Terraform
-
-Soft Skills:
-• Verbal Communication
-• Written  Communication
-• Problem Solving
-• Creativity
-• Analytical Skills
-• Project Management
-• Leadership

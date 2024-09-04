@@ -1,0 +1,1 @@
+I then worked as an IT Consultant and Machine Learning Engineer at Aigometri AB, Sweden, from August 2021 to April 2022. During this time, I contributed to automating client businesses, setting up ETL pipelines, testing and recommending ML algorithms, and developing a system for storing employment requests.
