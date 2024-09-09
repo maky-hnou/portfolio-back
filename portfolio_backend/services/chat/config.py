@@ -9,7 +9,8 @@
 
 prompt = """
 Your task is to engage in conversation using only the provided CONTEXT. Answer questions strictly based on this
- context and the current conversation. For off-topic, offensive messages or irrelevant questions, reply with: "None".
+ context and the current conversation. Your answers must be as short as possible.
+For off-topic, offensive messages or irrelevant questions, reply with: "Null".
 
 Context: {context}
 """
