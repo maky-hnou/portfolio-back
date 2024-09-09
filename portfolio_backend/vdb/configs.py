@@ -12,8 +12,8 @@ class VDBConfig:
             {"name": "topic", "dtype": DataType.VARCHAR, "max_length": 100},
         ]
         self.vector_db_index = {"index_type": "FLAT", "metric_type": "L2", "params": {}}
-        self.topk = 2
-        self.threshold = 1.5
+        self.topk = 5
+        self.threshold = 1.7
         self.search_params = {"metric_type": "L2", "params": {}}
         self.collection_name = "portfolio_data"
         self.vdb_name = "./portfolio.db"
