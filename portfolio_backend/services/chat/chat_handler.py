@@ -86,7 +86,7 @@ class ChatHandler:
             response = self.llm_model.invoke(input=formatted_conversation)
             ai_message = response.content  # type: ignore
             # if the response is None, increment off-topic count and send off-topic message as response
-            if "none" in ai_message.lower():
+            if "null" in ai_message.lower():
                 off_topic_response_count += 1
                 ai_message = off_topic_response.format(off_topic_count=off_topic_response_count)
         # else (of line 58) off-topic count exceeds 3, send the off-topic message and the off-topic count
