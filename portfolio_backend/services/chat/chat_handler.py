@@ -1,8 +1,3 @@
-# todo
-# receive the message from the endpoint (MessageDTO)
-# use the chat_id from the message to retrieve all the messages of the chat from the DB
-#
-
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
@@ -23,7 +18,6 @@ from portfolio_backend.web.api.message.schema import MessageBy, MessageDTO
 
 class ChatHandler:
     def __init__(self, llm_model: ChatOpenAI, milvus_db: MilvusDB):
-        print("Init ChatHandler")
         self.llm_model = llm_model
         self.milvus_db = milvus_db
         self.embedding_model = OpenAIEmbeddings(
