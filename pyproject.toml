@@ -29,6 +29,8 @@ prometheus-fastapi-instrumentator = "6.0.0"
 loguru = "^0.7.0"
 pandas = "^2.2.2"
 pymilvus = "^2.4.4"
+slowapi = "^0.1.9"
+redis = "^5.0.8"
 
 
 

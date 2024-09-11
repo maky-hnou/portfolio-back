@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request, Response
 from fastapi.param_functions import Depends
 from loguru import logger
 
@@ -9,6 +9,7 @@ from portfolio_backend.db.models.message_model import MessageModel
 from portfolio_backend.services.chat.chat_handler import ChatHandler
 from portfolio_backend.services.chat.dependencies import get_chat_handler
 from portfolio_backend.web.api.message.schema import MessageBy, MessageDTO
+from portfolio_backend.web.rate_limiter import limiter
 
 router = APIRouter()
 
@@ -33,7 +34,10 @@ async def get_all_chat_messages(chat_id: str, message_dao: MessageDAO = Depends(
 
 
 @router.post("/message", response_model=MessageDTO)
-async def create_message(
+@limiter.limit("50 per 5 minute", error_message="Rate limit 50 per 5 minutes exceeded for creating messages.")
+async def create_message(  # noqa: PLR0913
+    request: Request,  # noqa: ARG001
+    response: Response,  # noqa: ARG001
     human_message: MessageDTO,
     message_dao: MessageDAO = Depends(),
     chat_dao: ChatDAO = Depends(),

@@ -4,11 +4,13 @@ from fastapi import FastAPI
 from prometheus_fastapi_instrumentator.instrumentation import (
     PrometheusFastApiInstrumentator,
 )
+from redis import Redis
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from portfolio_backend.settings import settings
 from portfolio_backend.vdb.configs import vdb_config
 from portfolio_backend.vdb.milvus_connector import MilvusDB
+from portfolio_backend.web.rate_limiter import limiter
 
 
 def _setup_db(app: FastAPI) -> None:  # pragma: no cover
@@ -30,6 +32,8 @@ def _setup_db(app: FastAPI) -> None:  # pragma: no cover
 
     # Initialize Milvus DB
     app.state.milvus_db = MilvusDB(db=vdb_config.vdb_name)
+    app.state.redis = Redis(host="localhost", port=6379, db=0, decode_responses=True)
+    app.state.limiter = limiter
 
 
 def setup_prometheus(app: FastAPI) -> None:  # pragma: no cover
