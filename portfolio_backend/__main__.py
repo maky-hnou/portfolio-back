@@ -4,6 +4,7 @@ from ast import literal_eval
 
 import uvicorn
 from langchain_openai import OpenAIEmbeddings
+from loguru import logger
 
 from portfolio_backend.gunicorn_runner import GunicornApplication
 from portfolio_backend.services.embeddor.embeddings import Embedding
@@ -27,27 +28,33 @@ def set_multiproc_dir() -> None:
     so I've decided to export all needed variables,
     to avoid undefined behaviour.
     """
+    logger.debug("Cleaning up and setting up multiprocess directory for Prometheus.")
     shutil.rmtree(settings.prometheus_dir, ignore_errors=True)
     os.makedirs(settings.prometheus_dir, exist_ok=True)
+    logger.info(f"Multiprocess directory created at {settings.prometheus_dir}.")
     os.environ["prometheus_multiproc_dir"] = str(  # noqa SIM112
         settings.prometheus_dir.expanduser().absolute(),
     )
     os.environ["PROMETHEUS_MULTIPROC_DIR"] = str(
         settings.prometheus_dir.expanduser().absolute(),
     )
+    logger.debug("Prometheus environment variables set.")
 
 
 def set_vector_db() -> None:
+    logger.debug("Setting up the vector database connection.")
     vector_db = MilvusDB(db=vdb_config.vdb_name)
     if not vector_db.has_collection(collection_name=vdb_config.collection_name):
+        logger.warning(f"Vector DB has no collection {vdb_config.collection_name}. Creating new collection.")
         vector_db.create_collection(
             collection_name=vdb_config.collection_name,
             dimension=1536,
             schema=vdb_config.schema,
             index=vdb_config.index_params,
         )
+        logger.info(f"Collection {vdb_config.collection_name} created successfully.")
         if not file_exists(filename="portfolio_backend/static/data/embedded_text.csv"):
-            # Create text_df
+            logger.warning("Embedded text CSV file not found. Generating embeddings and creating CSV.")
             text_df = create_text_df(parent_path="portfolio_backend/static/data/text_data")
             embedding_model = OpenAIEmbeddings(
                 model=settings.embedding_model,
@@ -57,23 +64,26 @@ def set_vector_db() -> None:
                 lambda x: Embedding(text=x["text"], embedding_model=embedding_model).text_embedding,
                 axis=1,
             )
-
             text_df.to_csv("portfolio_backend/static/data/embedded_text.csv", index=False)
+            logger.info("CSV file for embedded text created successfully.")
         else:
-            # csv file exists
-            print("csv file exists")
+            logger.info("Embedded text CSV file already exists.")
             text_df = read_from_csv(filename="portfolio_backend/static/data/embedded_text.csv")
         text_df[vdb_config.vector_column] = text_df[vdb_config.vector_column].apply(literal_eval)
+        logger.debug("Inserting data into vector database.")
         vector_db.insert_data(collection_name=vdb_config.collection_name, data=text_df.to_dict("records"))
+        logger.info(f"Data inserted into collection {vdb_config.collection_name}.")
     else:
-        print("collection exists!")
+        logger.info(f"Collection {vdb_config.collection_name} already exists.")
 
 
 def main() -> None:
     """Entrypoint of the application."""
+    logger.info("Starting the application.")
     set_multiproc_dir()
     set_vector_db()
     if settings.reload:
+        logger.info(f"Running Uvicorn with reload enabled on {settings.host}:{settings.port}.")
         uvicorn.run(
             "portfolio_backend.web.application:get_app",
             workers=settings.workers_count,
@@ -86,6 +96,7 @@ def main() -> None:
     else:
         # We choose gunicorn only if reload option is not used, because reload feature doesn't work with Uvicorn
         # workers.
+        logger.info(f"Running Gunicorn with {settings.workers_count} workers on {settings.host}:{settings.port}.")
         GunicornApplication(
             "portfolio_backend.web.application:get_app",
             host=settings.host,
