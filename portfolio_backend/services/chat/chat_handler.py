@@ -1,3 +1,5 @@
+from typing import NamedTuple
+
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from loguru import logger
@@ -17,6 +19,12 @@ from portfolio_backend.vdb.milvus_connector import MilvusDB
 from portfolio_backend.web.api.message.schema import MessageBy, MessageDTO
 
 
+class ChatResult(NamedTuple):
+    system_message: str | None
+    ai_message: str
+    off_topic_response_count: int
+
+
 class ChatHandler:
     def __init__(self, llm_model: ChatOpenAI, milvus_db: MilvusDB):
         logger.info("Initializing ChatHandler with LLM and MilvusDB")
@@ -26,16 +34,17 @@ class ChatHandler:
             model=settings.embedding_model,
             openai_api_key=settings.openai_api_key,  # type: ignore
         )
+        self.message_type_map = {
+            MessageBy.HUMAN: HumanMessage,
+            MessageBy.AI: AIMessage,
+            MessageBy.SYSTEM: SystemMessage,
+        }
 
-    @staticmethod
-    def _format_message(message: MessageDTO) -> BaseMessage:
-        if message.message_by == MessageBy.HUMAN:
-            return HumanMessage(content=message.message_text)
-        if message.message_by == MessageBy.AI:
-            return AIMessage(content=message.message_text)
-        if message.message_by == MessageBy.SYSTEM:
-            return SystemMessage(content=message.message_text)
-        raise ValueError(f"Unexpected message_by value: {message.message_by}")
+    def _format_message(self, message: MessageDTO) -> BaseMessage:
+        try:
+            return self.message_type_map[message.message_by](content=message.message_text)
+        except KeyError as e:
+            raise ValueError(f"Unexpected message_by value: {message.message_by}") from e
 
     def _update_conversation(
         self,
@@ -46,9 +55,7 @@ class ChatHandler:
         logger.info(f"Updating conversation with new human query: {human_query.message_text}")
         old_conversation.append(human_query)
         # recreate the conversation by creating a list of responses (by system, ai, human)
-        formatted_conversation = []
-        for message in old_conversation:
-            formatted_conversation.append(self._format_message(message=message))
+        formatted_conversation = [self._format_message(msg) for msg in old_conversation]
         formatted_conversation.append(SystemMessage(system_message))
         logger.debug(f"Conversation updated with system message: {system_message}")
         return formatted_conversation
@@ -58,7 +65,7 @@ class ChatHandler:
         conversation: list[MessageDTO],
         human_message: MessageDTO,
         off_topic_response_count: int,
-    ) -> dict[str, str | None | int]:
+    ) -> ChatResult:
         logger.info(
             f"Handling chat for message: {human_message.message_text} with off-topic count: {off_topic_response_count}",
         )
@@ -108,8 +115,4 @@ class ChatHandler:
         logger.info(
             f"Returning system message: {system_message}, AI message: {ai_message}, off-topic count: {off_topic_response_count}"
         )
-        return {
-            "system_message": system_message,
-            "ai_message": ai_message,
-            "off_topic_response_count": off_topic_response_count,
-        }
+        return ChatResult(system_message, ai_message, off_topic_response_count)

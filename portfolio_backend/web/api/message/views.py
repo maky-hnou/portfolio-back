@@ -60,10 +60,10 @@ async def create_message(
     logger.info(f"AI response received for chat id {human_message.chat_id}: {ai_response}")
 
     messages = [MessageModel(**human_message.dict())]
-    if ai_response.get("system_message"):
+    if ai_response.system_message:
         system_message = MessageDTO(
             chat_id=chat.chat_id,  # type: ignore
-            message_text=ai_response.get("system_message"),  # type: ignore
+            message_text=ai_response.system_message,
             message_by=MessageBy.SYSTEM,
         )
         messages.append(MessageModel(**system_message.dict()))
@@ -71,7 +71,7 @@ async def create_message(
 
     ai_message = MessageDTO(
         chat_id=chat.chat_id,  # type: ignore
-        message_text=ai_response.get("ai_message"),  # type: ignore
+        message_text=ai_response.ai_message,
         message_by=MessageBy.AI,
     )
     messages.append(MessageModel(**ai_message.dict()))
@@ -80,8 +80,8 @@ async def create_message(
     await message_dao.add_many_on_conflict_do_nothing(model_instances=messages)
     logger.info(f"Messages saved for chat id {chat.chat_id}")  # type: ignore
 
-    if ai_response.get("off_topic_response_count") != chat.off_topic_response_count:  # type: ignore
-        chat.off_topic_response_count = ai_response.get("off_topic_response_count")  # type: ignore
+    if ai_response.off_topic_response_count != chat.off_topic_response_count:  # type: ignore
+        chat.off_topic_response_count = ai_response.off_topic_response_count  # type: ignore
         await chat_dao.add_single_on_conflict_do_update(
             model_instance=chat,
             conflict_column="chat_id",
@@ -92,6 +92,6 @@ async def create_message(
 
     return MessageDTO(
         chat_id=chat.chat_id,  # type: ignore
-        message_text=ai_response.get("ai_message"),  # type: ignore
+        message_text=ai_response.ai_message,
         message_by=MessageBy.AI,
     )
