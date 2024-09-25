@@ -104,10 +104,10 @@ ignore = [
     "ANN101",  # missing-type-self
     "ANN401",  # Any-type
     "ANN204",  # Missing-return-type-special-method
-    "D103",
-    "D101",
-    "D104",
-    "D102",
+    # "D103",
+    # "D101",
+    # "D104",
+    # "D102",
 ]
 [tool.ruff.format]
 # Indent with spaces
