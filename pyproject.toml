@@ -101,9 +101,9 @@ ignore = [
     "D203",  # One-blank-line-before-class
     "D213",  # Multi-line-summary-second-line
     # "COM812",  # Missing-trailing-comma
-    # "ANN101",  # missing-type-self
-    # "ANN401",  # Any-type
-    # "ANN204",  # Missing-return-type-special-method
+    "ANN101",  # missing-type-self
+    "ANN401",  # Any-type
+    "ANN204",  # Missing-return-type-special-method
     "D103",
     "D101",
     "D104",

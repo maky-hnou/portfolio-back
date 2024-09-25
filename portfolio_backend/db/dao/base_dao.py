@@ -26,7 +26,11 @@ ModelInstance = TypeVar("ModelInstance", bound="Base")
 
 
 class BaseDAO:
-    """Base class for CRUD transactions."""
+    """Base class for CRUD transactions.
+
+    Args:
+        session (AsyncSession): The asynchronous database session used for Message model transactions.
+    """
 
     def __init__(self, session: AsyncSession = Depends(get_db_session)):
         """Initialize the BaseDAO with a database session.
@@ -89,7 +93,7 @@ class BaseDAO:
         if model_instances:
             models_data = [self._get_model_data(model_instance=model_instance) for model_instance in model_instances]
             await self.session.execute(
-                pg_insert(model_instances[0].__class__).values(models_data).on_conflict_do_nothing()
+                pg_insert(model_instances[0].__class__).values(models_data).on_conflict_do_nothing(),
             )
 
     async def add_many_on_conflict_do_update(self, model_instances: list[ModelInstance], conflict_column: str) -> None:
