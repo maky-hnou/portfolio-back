@@ -1,3 +1,22 @@
+"""Module containing SQLAlchemy models for textual data.
+
+This module defines a `TextDataModel` class that represents textual data entries stored in the database.
+The model includes fields for a unique text identifier, filename, textual content, source, topic,
+and a timestamp indicating when the text data was created.
+
+Classes:
+    TextDataModel: Represents a textual data entity with fields for text ID, filename, content, source, topic, and creation timestamp.
+
+Dependencies:
+    - sqlalchemy.orm.Mapped: Type hint for SQLAlchemy mapped class attributes.
+    - sqlalchemy.orm.mapped_column: Helper for defining columns in SQLAlchemy models.
+    - sqlalchemy.sql.sqltypes.DateTime: SQLAlchemy column type for DateTime.
+    - sqlalchemy.sql.sqltypes.String: SQLAlchemy column type for String.
+    - portfolio_backend.db.base.Base: Custom base class for SQLAlchemy models in the project.
+    - uuid: Standard library for generating UUIDs.
+    - datetime: Standard library for working with date and time objects.
+"""
+
 import uuid
 from datetime import datetime
 

@@ -1,3 +1,23 @@
+"""Module containing SQLAlchemy models for chat entities.
+
+This module defines a `ChatModel` class that represents chat-related data stored in the database.
+The model includes fields for a unique chat identifier, off-topic response count, and a timestamp
+indicating when the chat was created.
+
+Classes:
+    ChatModel: Represents a chat entity with fields for chat ID, off-topic response count, and creation timestamp.
+
+Dependencies:
+    - sqlalchemy.orm.Mapped: Type hint for SQLAlchemy mapped class attributes.
+    - sqlalchemy.orm.mapped_column: Helper for defining columns in SQLAlchemy models.
+    - sqlalchemy.sql.sqltypes.UUID: SQLAlchemy column type for UUID.
+    - sqlalchemy.sql.sqltypes.DateTime: SQLAlchemy column type for DateTime.
+    - sqlalchemy.sql.sqltypes.Integer: SQLAlchemy column type for Integer.
+    - portfolio_backend.db.base.Base: Custom base class for SQLAlchemy models in the project.
+    - uuid: Standard library for generating UUIDs.
+    - datetime: Standard library for working with date and time objects.
+"""
+
 import uuid
 from datetime import datetime
 

@@ -1,3 +1,25 @@
+"""Module containing SQLAlchemy models for messages in a chat system.
+
+This module defines a `MessageModel` class that represents message-related data stored in the database.
+The model includes fields for a unique message identifier, foreign key to the chat, message text, sender ID,
+and a timestamp indicating when the message was created.
+
+Classes:
+    MessageModel: Represents a message entity with fields for message ID, chat ID, message text, sender, and creation timestamp.
+
+Dependencies:
+    - sqlalchemy.orm.Mapped: Type hint for SQLAlchemy mapped class attributes.
+    - sqlalchemy.orm.mapped_column: Helper for defining columns in SQLAlchemy models.
+    - sqlalchemy.sql.sqltypes.UUID: SQLAlchemy column type for UUID.
+    - sqlalchemy.sql.sqltypes.DateTime: SQLAlchemy column type for DateTime.
+    - sqlalchemy.sql.sqltypes.String: SQLAlchemy column type for String.
+    - sqlalchemy.ForeignKey: SQLAlchemy ForeignKey for setting up relationships between tables.
+    - portfolio_backend.db.base.Base: Custom base class for SQLAlchemy models in the project.
+    - uuid: Standard library for generating UUIDs.
+    - uuid.uuid4: Function for generating a random UUID.
+    - datetime: Standard library for working with date and time objects.
+"""
+
 import uuid
 from datetime import datetime
 from uuid import uuid4
