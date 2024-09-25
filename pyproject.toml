@@ -95,19 +95,19 @@ select = [
 ignore = [
     "E501",  # Line too long
     # "W503",  # Line break before binary operator
-    "D100",  # Missing docstring in public module
-    "D107",  # Missing docstring in `__init__`
+    # "D100",  # Missing docstring in public module
+    # "D107",  # Missing docstring in `__init__`
     "B008",  # Function calls in default function arguments.
     "D203",  # One-blank-line-before-class
     "D213",  # Multi-line-summary-second-line
-    "COM812",  # Missing-trailing-comma
+    # "COM812",  # Missing-trailing-comma
     "ANN101",  # missing-type-self
     "ANN401",  # Any-type
     "ANN204",  # Missing-return-type-special-method
-    "D103",
-    "D101",
-    "D104",
-    "D102",
+    # "D103",
+    # "D101",
+    # "D104",
+    # "D102",
 ]
 [tool.ruff.format]
 # Indent with spaces
