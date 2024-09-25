@@ -1,3 +1,19 @@
+"""
+This module handles Alembic database migrations for the application.
+
+It defines functions to run migrations in both 'offline' and 'online' modes, 
+using SQLAlchemy's async engine for database connections.
+
+The `run_migrations_offline` function handles offline migrations, configuring the 
+migration context with a URL, while `run_migrations_online` sets up an asynchronous 
+connection to the database and runs the migrations in online mode. The `do_run_migrations` 
+helper function is used to configure the context and execute migrations synchronously 
+within the given connection.
+
+Logging is configured using the settings from Alembic's config file, and the metadata 
+from all models is loaded to support autogeneration of migrations.
+"""
+
 import asyncio
 from logging.config import fileConfig
 
@@ -33,16 +49,11 @@ target_metadata = meta
 
 
 async def run_migrations_offline() -> None:
-    """Run migrations in 'offline' mode.
+    """
+    Run migrations in 'offline' mode.
 
-    This configures the context with just a URL
-    and not an Engine, though an Engine is acceptable
-    here as well.  By skipping the Engine creation
-    we don't even need a DBAPI to be available.
-
-    Calls to context.execute() here emit the given string to the
-    script output.
-
+    Returns:
+        None
     """
     context.configure(
         url=str(settings.db_url),
@@ -57,9 +68,14 @@ async def run_migrations_offline() -> None:
 
 def do_run_migrations(connection: Connection) -> None:
     """
-    Run actual sync migrations.
+    Run synchronous migrations with the provided connection.
 
-    :param connection: connection to the database.
+    Args:
+        connection (Connection): A SQLAlchemy connection object used to perform
+        the migrations.
+
+    Returns:
+        None
     """
     context.configure(connection=connection, target_metadata=target_metadata)
 
@@ -71,8 +87,8 @@ async def run_migrations_online() -> None:
     """
     Run migrations in 'online' mode.
 
-    In this scenario we need to create an Engine
-    and associate a connection with the context.
+    Returns:
+        None
     """
     connectable = create_async_engine(str(settings.db_url))
 
