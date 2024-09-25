@@ -49,8 +49,7 @@ target_metadata = meta
 
 
 async def run_migrations_offline() -> None:
-    """
-    Run migrations in 'offline' mode.
+    """Run migrations in 'offline' mode.
 
     Returns:
         None
@@ -67,8 +66,7 @@ async def run_migrations_offline() -> None:
 
 
 def do_run_migrations(connection: Connection) -> None:
-    """
-    Run synchronous migrations with the provided connection.
+    """Run synchronous migrations with the provided connection.
 
     Args:
         connection (Connection): A SQLAlchemy connection object used to perform
@@ -84,8 +82,7 @@ def do_run_migrations(connection: Connection) -> None:
 
 
 async def run_migrations_online() -> None:
-    """
-    Run migrations in 'online' mode.
+    """Run migrations in 'online' mode.
 
     Returns:
         None
