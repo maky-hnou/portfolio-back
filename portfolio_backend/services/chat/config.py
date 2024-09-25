@@ -1,3 +1,19 @@
+"""Module for defining prompt templates and conversation parameters for the chat system.
+
+This module contains the prompt structure and related messages used in the chat application.
+It includes templates for engaging with users, handling off-topic responses, and setting limits on conversation length.
+
+Attributes:
+    prompt (str): The template for the conversation prompt, including context.
+    general_context (str): General context about Hani for the chat.
+    off_topic_response (str): Response template for off-topic or irrelevant questions.
+    ai_first_message (str): The initial message from the AI when a chat begins.
+    limit_out_of_topic_message (str): Message indicating the user has reached the off-topic limit.
+    limit_length_message (str): Message indicating the user has exceeded the conversation length limit.
+    messages_limit (int): Maximum number of messages allowed in a conversation.
+    off_topic_count_limit (int): Maximum number of off-topic messages allowed before termination.
+"""
+
 prompt = """Your task is to engage in this conversation. Answer the questions strictly based on the provided context \
 and the current conversation. Your answers must be as short as possible.
 For off-topic, offensive messages or irrelevant questions, reply with: "Null".
