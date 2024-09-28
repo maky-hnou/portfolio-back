@@ -1,3 +1,19 @@
+"""Logging configuration and handler integration.
+
+This module sets up logging for the application using the Loguru library.
+It intercepts standard logging calls and redirects them to Loguru for better
+formatting and management.
+
+Dependencies:
+    - logging: Standard library for logging in Python.
+    - sys: Provides access to system-specific parameters and functions.
+    - logger: Loguru's logging interface.
+
+Classes:
+    InterceptHandler: Custom logging handler that intercepts log records
+                     and passes them to Loguru.
+"""
+
 import logging
 import sys
 
@@ -17,9 +33,10 @@ class InterceptHandler(logging.Handler):
     """
 
     def emit(self, record: logging.LogRecord) -> None:  # pragma: no cover
-        """Propagates logs to loguru.
+        """Propagates logs to Loguru.
 
-        :param record: record to log.
+        Args:
+            record (logging.LogRecord): The log record to propagate.
         """
         try:
             level: str | int = logger.level(record.levelname).name
