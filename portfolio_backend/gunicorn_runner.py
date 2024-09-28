@@ -1,3 +1,22 @@
+"""Custom Gunicorn application and Uvicorn worker configuration.
+
+This module defines a custom Gunicorn application that utilizes Uvicorn workers
+with specific configurations. It includes a specialized worker class to set up
+Uvicorn with optimal parameters for asynchronous handling.
+
+Dependencies:
+    - Any: Typing hint for flexible argument types.
+    - BaseApplication: Base class for Gunicorn applications.
+    - import_app: Utility function to import an application.
+    - BaseUvicornWorker: Base class for Uvicorn workers.
+
+Classes:
+    UvicornWorker: Custom worker class that extends UvicornWorker to define
+                   specific configurations.
+    GunicornApplication: Custom application class to start Gunicorn with
+                         Uvicorn workers.
+"""
+
 from typing import Any
 
 from gunicorn.app.base import BaseApplication
@@ -42,6 +61,19 @@ class GunicornApplication(BaseApplication):
         workers: int,
         **kwargs: Any,
     ):
+        """Initialize the Gunicorn application with custom Uvicorn workers.
+
+        This constructor sets up the Gunicorn application with the specified
+        configuration options, including the binding address, number of workers,
+        and the worker class to be used.
+
+        Args:
+            app (str): The Python path to the application factory.
+            host (str): The host address to bind the application.
+            port (int): The port number to bind the application.
+            workers (int): The number of worker processes to spawn.
+            **kwargs (Any): Additional keyword arguments to configure Gunicorn.
+        """
         self.options = {
             "bind": f"{host}:{port}",
             "workers": workers,
@@ -70,6 +102,7 @@ class GunicornApplication(BaseApplication):
         function's returns. We return python's path to
         the app's factory.
 
-        :returns: python path to app factory.
+        Returns:
+            str: python path to app factory.
         """
         return import_app(self.app)

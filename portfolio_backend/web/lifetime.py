@@ -1,3 +1,23 @@
+"""Module for managing FastAPI application startup and shutdown events.
+
+This module provides functions for setting up the database connection,
+enabling Prometheus integration for monitoring, and registering
+startup and shutdown events for the FastAPI application. It manages
+the application's state, storing instances of the database engine,
+session factory, Milvus database connector, Redis client, and rate limiter.
+
+Dependencies:
+    - FastAPI: The main class for building the web application.
+    - PrometheusFastApiInstrumentator: Class for integrating Prometheus monitoring.
+    - Redis: Class for connecting to a Redis database.
+    - async_sessionmaker: Factory for creating asynchronous database sessions.
+    - create_async_engine: Function for creating an asynchronous SQLAlchemy engine.
+    - settings: Module containing application configuration settings.
+    - vdb_config: Configuration for the vector database.
+    - MilvusDB: Class for connecting to the Milvus vector database.
+    - limiter: Rate limiter for API requests.
+"""
+
 from collections.abc import Awaitable, Callable
 
 from fastapi import FastAPI
@@ -16,11 +36,12 @@ from portfolio_backend.web.rate_limiter import limiter
 def _setup_db(app: FastAPI) -> None:  # pragma: no cover
     """Create connection to the database.
 
-    This function creates SQLAlchemy engine instance,
-    session_factory for creating sessions
-    and stores them in the application's state property.
+    This function creates an SQLAlchemy engine instance,
+    a session factory for creating sessions, and stores them
+    in the application's state property.
 
-    :param app: fastAPI application.
+    Args:
+        app (FastAPI): The FastAPI application instance.
     """
     engine = create_async_engine(str(settings.db_url), echo=settings.db_echo)
     session_factory = async_sessionmaker(
@@ -37,9 +58,10 @@ def _setup_db(app: FastAPI) -> None:  # pragma: no cover
 
 
 def setup_prometheus(app: FastAPI) -> None:  # pragma: no cover
-    """Enable prometheus integration.
+    """Enable Prometheus integration.
 
-    :param app: current application.
+    Args:
+        app (FastAPI): The FastAPI application instance.
     """
     PrometheusFastApiInstrumentator(should_group_status_codes=False).instrument(
         app,
@@ -47,13 +69,16 @@ def setup_prometheus(app: FastAPI) -> None:  # pragma: no cover
 
 
 def register_startup_event(app: FastAPI) -> Callable[[], Awaitable[None]]:  # pragma: no cover
-    """Actions to run on application startup.
+    """Register actions to run on application startup.
 
-    This function uses fastAPI app to store data
+    This function uses the FastAPI app to store data
     in the state, such as db_engine.
 
-    :param app: the fastAPI application.
-    :return: function that actually performs actions.
+    Args:
+        app (FastAPI): The FastAPI application instance.
+
+    Returns:
+        Callable[[], Awaitable[None]]: A function that performs startup actions.
     """
 
     @app.on_event("startup")
@@ -68,10 +93,13 @@ def register_startup_event(app: FastAPI) -> Callable[[], Awaitable[None]]:  # pr
 
 
 def register_shutdown_event(app: FastAPI) -> Callable[[], Awaitable[None]]:  # pragma: no cover
-    """Actions to run on application's shutdown.
+    """Register actions to run on application shutdown.
 
-    :param app: fastAPI application.
-    :return: function that actually performs actions.
+    Args:
+        app (FastAPI): The FastAPI application instance.
+
+    Returns:
+        Callable[[], Awaitable[None]]: A function that performs shutdown actions.
     """
 
     @app.on_event("shutdown")

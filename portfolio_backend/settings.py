@@ -1,3 +1,22 @@
+"""Application settings configuration.
+
+This module defines the application's settings using Pydantic.
+The settings can be configured via environment variables and
+include configurations for logging, database connections, and OpenAI API.
+
+Dependencies:
+    - enum: For defining enumeration types.
+    - pathlib: For handling filesystem paths.
+    - tempfile: For accessing temporary directory paths.
+    - pydantic_settings: For creating settings with validation.
+    - yarl: For building URLs.
+
+Classes:
+    LogLevel: Enum representing possible log levels for the application.
+    Settings: Pydantic class for application settings, including
+              database and API configurations.
+"""
+
 import enum
 from pathlib import Path
 from tempfile import gettempdir

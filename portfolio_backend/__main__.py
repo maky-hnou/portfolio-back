@@ -1,3 +1,28 @@
+"""Main application entry point and setup.
+
+This module initializes and configures the FastAPI application,
+sets up the multiprocess directory for Prometheus metrics, and
+manages the vector database connection using MilvusDB. It includes
+functions to handle the embedding generation and data insertion
+from a specified CSV file.
+
+Dependencies:
+    - os: Module for interacting with the operating system.
+    - shutil: Module for file operations.
+    - ast: Module for safely evaluating strings as Python literals.
+    - uvicorn: ASGI server for running the FastAPI application.
+    - OpenAIEmbeddings: Class for generating embeddings.
+    - logger: Loguru logger for logging events.
+    - GunicornApplication: Custom Gunicorn application runner.
+    - Embedding: Class for handling text embeddings.
+    - settings: Application configuration settings.
+    - create_text_df: Function to create a DataFrame from text files.
+    - file_exists: Utility function to check if a file exists.
+    - read_from_csv: Function to read data from a CSV file.
+    - vdb_config: Configuration for the vector database.
+    - MilvusDB: Class for interacting with the Milvus vector database.
+"""
+
 import os
 import shutil
 from ast import literal_eval
@@ -42,6 +67,16 @@ def set_multiproc_dir() -> None:
 
 
 def set_vector_db() -> None:
+    """Set up the vector database connection and manage data insertion.
+
+    This function initializes the connection to the MilvusDB,
+    checks for the existence of the specified collection, and
+    handles the creation of embeddings from a CSV file if necessary.
+    If the embedded text CSV file is missing, it generates the embeddings
+    and saves them to the CSV file.
+
+    Logs important steps in the process for tracking and debugging.
+    """
     logger.debug("Setting up the vector database connection.")
     vector_db = MilvusDB(db=vdb_config.vdb_name)
     if not vector_db.has_collection(collection_name=vdb_config.collection_name):
@@ -78,7 +113,12 @@ def set_vector_db() -> None:
 
 
 def main() -> None:
-    """Entrypoint of the application."""
+    """Entrypoint of the application.
+
+    Initializes the application, sets up the multiprocess directory,
+    configures the vector database, and runs the server using either
+    Uvicorn or Gunicorn based on the settings.
+    """
     logger.info("Starting the application.")
     set_multiproc_dir()
     set_vector_db()

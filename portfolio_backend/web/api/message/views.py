@@ -1,3 +1,27 @@
+"""Module defining message-related API endpoints for managing chat messages.
+
+This module provides API routes for creating, retrieving, and processing messages in chats.
+It integrates with a custom ChatHandler service to handle conversation flow and process AI
+responses to human messages. The module also includes rate-limiting for message creation.
+
+Routes:
+    get_message: Retrieve a single message by its ID.
+    get_all_chat_messages: Retrieve all messages for a specific chat.
+    create_message: Create a new message from a human and generate AI/system responses.
+
+Dependencies:
+    - APIRouter: FastAPI router class for creating API endpoints.
+    - ChatDAO: DAO class for managing chat-related database interactions.
+    - MessageDAO: DAO class for managing message-related database interactions.
+    - ChatModel: Pydantic model representing the chat in the database.
+    - MessageModel: Pydantic model representing messages in the database.
+    - MessageDTO: Data transfer object for message data.
+    - MessageBy: Enum defining the origin of a message (e.g., HUMAN, AI, SYSTEM).
+    - ChatHandler: Service class responsible for handling chat conversation logic.
+    - limiter: Custom rate limiter for controlling API request frequency.
+    - loguru: Logging utility for tracking API interactions.
+"""
+
 from fastapi import APIRouter, HTTPException, Request, Response
 from fastapi.param_functions import Depends
 from loguru import logger
@@ -16,6 +40,19 @@ router = APIRouter()
 
 @router.get("/message/{message_id}", response_model=MessageDTO)
 async def get_message(message_id: str, message_dao: MessageDAO = Depends()) -> MessageModel | None:
+    """Retrieve a single message by its unique identifier.
+
+    Args:
+        message_id (str): The unique identifier for the message.
+        message_dao (MessageDAO): The data access object responsible for fetching message data.
+            Defaults to being injected via FastAPI's `Depends`.
+
+    Returns:
+        MessageModel | None: The message object if found, otherwise raises a 404 error.
+
+    Raises:
+        HTTPException: If the message is not found in the database, a 404 error is raised.
+    """
     logger.info(f"Fetching message with id: {message_id}")
     message = await message_dao.get_single_row(model_class=MessageModel, message_id=message_id)
     if message is None:
@@ -27,6 +64,16 @@ async def get_message(message_id: str, message_dao: MessageDAO = Depends()) -> M
 
 @router.get("/message/chat/{chat_id}", response_model=list[MessageDTO])
 async def get_all_chat_messages(chat_id: str, message_dao: MessageDAO = Depends()) -> list[MessageDTO | None]:
+    """Retrieve all messages for a specific chat.
+
+    Args:
+        chat_id (str): The unique identifier for the chat.
+        message_dao (MessageDAO): The data access object responsible for fetching message data.
+            Defaults to being injected via FastAPI's `Depends`.
+
+    Returns:
+        list[MessageDTO | None]: A list of message data transfer objects for the chat.
+    """
     logger.info(f"Fetching all messages for chat with id: {chat_id}")
     messages = await message_dao.get_many_rows(model_class=MessageModel, chat_id=chat_id)
     logger.info(f"Found {len(messages)} messages for chat with id: {chat_id}")
@@ -43,6 +90,19 @@ async def create_message(  # noqa: PLR0913
     chat_dao: ChatDAO = Depends(),
     chat_handler: ChatHandler = Depends(get_chat_handler),
 ) -> MessageDTO:
+    """Create a new human message and generate system/AI responses.
+
+    Args:
+        request (Request): The HTTP request object (unused but required for middleware).
+        response (Response): The HTTP response object (unused but required for middleware).
+        human_message (MessageDTO): The message data transfer object containing the human message details.
+        message_dao (MessageDAO): DAO for handling message-related database operations.
+        chat_dao (ChatDAO): DAO for handling chat-related database operations.
+        chat_handler (ChatHandler): Service for managing chat logic, responsible for AI/system message generation.
+
+    Returns:
+        MessageDTO: The message data transfer object representing the AI response message.
+    """
     logger.info(f"Creating new message for chat id: {human_message.chat_id}")
 
     chat = await chat_dao.get_single_row(model_class=ChatModel, chat_id=human_message.chat_id)
