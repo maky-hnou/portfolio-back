@@ -1,3 +1,26 @@
+"""Module defining chat-related API endpoints for handling chat creation and retrieval.
+
+This module contains API routes for creating new chat instances and fetching existing ones.
+It utilizes data access objects (DAOs) for interacting with the database, and schema models
+for data transfer. Additionally, it enforces rate limiting on chat creation.
+
+Routes:
+    get_chat: Retrieve a specific chat by its ID.
+    create_chat: Create a new chat and initialize the conversation with system and AI messages.
+
+Dependencies:
+    - APIRouter: FastAPI router class for creating API endpoints.
+    - ChatDAO: DAO class for managing chat-related database interactions.
+    - MessageDAO: DAO class for managing message-related database interactions.
+    - ChatModel: Pydantic model representing the chat in the database.
+    - MessageModel: Pydantic model representing messages in the database.
+    - ChatDTO: Data transfer object for chat data.
+    - MessageDTO: Data transfer object for message data.
+    - MessageBy: Enum defining the origin of a message (e.g., SYSTEM, AI).
+    - limiter: Custom rate limiter for controlling API request frequency.
+    - loguru: Logging utility for tracking API interactions.
+"""
+
 from fastapi import APIRouter, HTTPException, Request, Response
 from fastapi.param_functions import Depends
 from loguru import logger
@@ -16,6 +39,19 @@ router = APIRouter()
 
 @router.get("/chat/{chat_id}", response_model=ChatDTO)
 async def get_chat(chat_id: str, chat_dao: ChatDAO = Depends()) -> ChatDTO:
+    """Retrieve a specific chat by its unique identifier.
+
+    Args:
+        chat_id (str): The unique identifier for the chat.
+        chat_dao (ChatDAO): The data access object responsible for fetching the chat data.
+            Defaults to being injected via FastAPI's `Depends`.
+
+    Returns:
+        ChatDTO: The chat data transfer object representing the chat details.
+
+    Raises:
+        HTTPException: If the chat is not found in the database, a 404 error is raised.
+    """
     logger.info(f"Fetching chat with id: {chat_id}")
     chat = await chat_dao.get_single_row(model_class=ChatModel, chat_id=chat_id)
     if chat is None:
@@ -34,6 +70,18 @@ async def create_chat(
     chat_dao: ChatDAO = Depends(),
     message_dao: MessageDAO = Depends(),
 ) -> ChatDTO:
+    """Create a new chat and add system and AI messages to the conversation.
+
+    Args:
+        request (Request): The HTTP request object (unused but required for middleware).
+        response (Response): The HTTP response object (unused but required for middleware).
+        chat (ChatDTO): The chat data transfer object containing chat creation details.
+        chat_dao (ChatDAO): The data access object for handling chat-related database operations.
+        message_dao (MessageDAO): The data access object for handling message-related database operations.
+
+    Returns:
+        ChatDTO: The created chat object with its unique identifier and associated data.
+    """
     logger.info(f"Creating new chat with data: {chat.dict()}")
     chat_model = ChatModel(**chat.dict())
     await chat_dao.add_single_on_conflict_do_nothing(model_instance=chat_model)

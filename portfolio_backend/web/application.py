@@ -1,3 +1,24 @@
+"""Module for configuring and creating the FastAPI application instance.
+
+This module sets up the main FastAPI application for the portfolio backend,
+including middleware configuration, static file serving, CORS setup,
+and the inclusion of API routes. The application is constructed using
+FastAPI's `FastAPI` class, with logging configured and startup/shutdown
+events registered.
+
+Dependencies:
+    - FastAPI: The main class for building the web application.
+    - UJSONResponse: FastAPI response class for JSON responses using ujson.
+    - StaticFiles: Middleware for serving static files.
+    - CORSMiddleware: Middleware for handling Cross-Origin Resource Sharing.
+    - metadata: Module for accessing package metadata.
+    - Path: Class for manipulating filesystem paths.
+    - configure_logging: Function to set up logging configuration.
+    - api_router: The main API router for the application.
+    - register_shutdown_event: Function to register shutdown event handlers.
+    - register_startup_event: Function to register startup event handlers.
+"""
+
 from importlib import metadata
 from pathlib import Path
 
@@ -17,11 +38,10 @@ APP_ROOT = Path(__file__).parent.parent
 
 
 def get_app() -> FastAPI:
-    """Get FastAPI application.
+    """Create and configure a FastAPI application instance.
 
-    This is the main constructor of an application.
-
-    :return: application.
+    Returns:
+        FastAPI: The configured FastAPI application instance.
     """
     configure_logging()
     app = FastAPI(
