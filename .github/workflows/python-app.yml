@@ -26,5 +26,6 @@ jobs:
         python -m pip install poetry==1.8.3
         # python -m pip install virtualenvwrapper
         # mkvirtualenv portfolio_backend -p python3.10
-        workon portfolio_backend
+        ~/.local/bin/virtualenv ~/.virtualenvs/portfolio_backend -p python3.10
+        source ~/.virtualenvs/portfolio_backend/bin/activate
         poetry install
