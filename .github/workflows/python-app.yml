@@ -64,3 +64,5 @@ jobs:
       if: steps.cache-deps.outputs.cache-hit != 'true'
     - name: testing
       run: poetry env info
+           pwd
+           ls -al
