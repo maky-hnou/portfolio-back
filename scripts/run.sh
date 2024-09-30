@@ -1,5 +1,5 @@
 #!/bin/bash
 set -e
 
-poetry run alembic upgrade head
-poetry run python -m portfolio_backend
+poetry run ~/.virtualenvs/portfolio_backend/bin/alembic upgrade head
+poetry run ~/.virtualenvs/portfolio_backend/bin/python -m portfolio_backend
