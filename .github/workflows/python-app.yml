@@ -29,7 +29,7 @@ jobs:
     - name: cache poetry install
       uses: actions/cache@v2
       with:
-        path: ~/.local
+        path: .
         key: poetry-1.8.3-0
         
     # Install Poetry. You could do this manually, or there are several actions that do this.
