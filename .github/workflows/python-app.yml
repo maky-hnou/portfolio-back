@@ -63,6 +63,6 @@ jobs:
     - run: poetry install --no-interaction --no-root
       if: steps.cache-deps.outputs.cache-hit != 'true'
     - name: testing
-      run: poetry env info
-           pwd
-           ls -al
+      run: pwd
+    - name: ls
+      run: ls -al
