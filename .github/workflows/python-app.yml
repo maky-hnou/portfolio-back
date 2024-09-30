@@ -1,7 +1,4 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
-
-name: Python application
+name: Checkout Code
 
 on:
   push:
@@ -16,35 +13,5 @@ jobs:
     runs-on: self-hosted
 
     steps:
+    # Check out the latest code from the main branch
     - uses: actions/checkout@v4
-    - name: Set up Python 3.10
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.10"
-        
-    # Install Poetry. You could do this manually, or there are several actions that do this.
-    # `snok/install-poetry` seems to be minimal yet complete, and really just calls out to
-    # Poetry's default install script, which feels correct. I pin the Poetry version here
-    # because Poetry does occasionally change APIs between versions and I don't want my
-    # actions to break if it does.
-    #
-    # The key configuration value here is `virtualenvs-in-project: true`: this creates the
-    # venv as a `.venv` in your testing directory, which allows the next step to easily
-    # cache it.
-    - uses: snok/install-poetry@v1
-      with:
-        version: 1.8.3
-        virtualenvs-create: true
-        virtualenvs-in-project: true 
-
-    # Install dependencies. `--no-root` means "install all dependencies but not the project
-    # itself", which is what you want to avoid caching _your_ code. The `if` statement
-    # ensures this only runs on a cache miss.
-    - run: poetry install --no-interaction --no-root
-      if: steps.cache-deps.outputs.cache-hit != 'true'
-    - name: testing
-      run: pwd
-    - name: ls
-      run: ls -al
-    - name: venv
-      run: poetry env info
