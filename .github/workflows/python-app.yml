@@ -11,13 +11,6 @@ jobs:
   build:
 
     runs-on: self-hosted
-    env:
-      PORTFOLIO_BACKEND_DB_HOST: ${{secrets.PORTFOLIO_BACKEND_DB_HOST}}
-      PORTFOLIO_BACKEND_DB_PORT: ${{secrets.PORTFOLIO_BACKEND_DB_PORT}}
-      PORTFOLIO_BACKEND_DB_USER: ${{secrets.PORTFOLIO_BACKEND_DB_USER}}
-      PORTFOLIO_BACKEND_DB_PASS: ${{secrets.PORTFOLIO_BACKEND_DB_PASS}}
-      PORTFOLIO_BACKEND_DB_BASE: ${{secrets.PORTFOLIO_BACKEND_DB_BASE}}
-      PORTFOLIO_BACKEND_OPENAI_API_KEY: ${{secrets.PORTFOLIO_BACKEND_OPENAI_API_KEY}}
 
     steps:
     # Check out the latest code from the main branch
