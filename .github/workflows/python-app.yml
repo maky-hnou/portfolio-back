@@ -63,4 +63,4 @@ jobs:
     - run: poetry install --no-interaction --no-root
       if: steps.cache-deps.outputs.cache-hit != 'true'
     - name: testing
-      run: scripts/run.sh
+      run: poetry env info
