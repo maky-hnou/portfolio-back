@@ -2,6 +2,12 @@
 
 This project was generated using fastapi_template.
 
+## Dependencies  
+To run this project, you need to have:
+- postgresql
+- redis
+- python3.10 or greater
+
 ## Uv
 
 This project uses uv. It's a modern dependency management tool.
