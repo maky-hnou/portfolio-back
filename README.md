@@ -188,3 +188,63 @@ created_at TIMESTAMP DEFAULT NOW()
 * Vector DB: 1536-dimension embeddings
 * Search: Top 5 results, L2 distance metric
 * Prometheus metrics enabled
+---
+## API Documentation (Swagger/OpenAPI)
+FastAPI backend automatically generates interactive API documentation using Swagger UI and ReDoc. This provides a convenient way to explore and test the API endpoints.
+
+### Accessing the Documentation
+
+1. **Swagger UI** (Interactive Documentation):
+   * Available at: http://<host>:<port>/api/v1/docs
+   * Features:
+     * Interactive endpoint testing
+     * Schema visualization
+     * Try-it-out functionality
+     * Example requests/responses
+
+2. **ReDoc** (Alternative Documentation):
+   * Available at: http://<your-host>:<your-port>/api/v1/redoc
+   * Features:
+     * Clean, responsive documentation
+     * Better for reading/navigating
+     * No interactive testing
+
+### Customization
+The documentation is self-hosted (files are in `portfolio_backend/static/docs/`) with these configurations:  
+* **OpenAPI Schema Path:** `/api/openapi.json`
+* **Disabled Default Docs:** Set in `application.py`:
+```
+app = FastAPI(
+    docs_url=None,  # Disables default Swagger
+    redoc_url=None,  # Disables default ReDoc
+    openapi_url="/api/openapi.json"
+)
+```
+
+* **Custom Mounting:** The static docs are mounted at `/static`:
+```
+Copy
+app.mount("/static", StaticFiles(directory=APP_ROOT / "static"), name="static")
+```
+
+### How It Works
+1. The docs router (`web/api/docs/views.py`) serves the customized Swagger UI
+2. FastAPI generates the OpenAPI schema automatically from your:
+   * Route definitions
+   * Pydantic models (request/response schemas)
+   * Docstrings (appear as endpoint descriptions)
+
+### Example Endpoint Documentation
+Chat endpoints are automatically documented with:
+* All available parameters
+* Request/response schemas
+* Example values
+* Authentication requirements (rate limits in this case)
+
+### Testing API Endpoints
+Using Swagger UI, you can:
+   1. Click on an endpoint (e.g., `POST /api/v1/chat`)
+   2. Click "Try it out"
+   3. Enter required parameters
+   4. Execute the request
+   5. View the live response
